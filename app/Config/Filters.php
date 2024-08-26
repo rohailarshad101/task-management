@@ -74,17 +74,16 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             'authfilter' => ['except' => ['login', 'logout']],
-            'csrf' => ['except' => 'admin/tasks/*'],
-            // 'honeypot',
-            // 'csrf',
-            // 'invalidchars',
+            'csrf' => ['except' => ['admin/tasks/*', 'admin/task/*', 'user/notifications/*']],
         ],
         'after' => [
             // 'honeypot',
             // 'secureheaders',
             'cors' => [
                 'except' => [
-                    'admin/tasks/*'
+                    'admin/task/*',
+                    'admin/tasks/*',
+                    'user/notifications/*',
                 ]
             ]
         ],

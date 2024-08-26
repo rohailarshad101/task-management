@@ -9,7 +9,7 @@ class TaskModel extends Model
     protected $table = 'tasks';
     protected $primaryKey = 'id';
     protected $allowedFields = [
-        'title', 'category_id', 'responsible_persons', 'start_date', 'responsible_person', 'due_date', 'tags', 'priority', 'status', 'description'
+        'created_by', 'title', 'category_id', 'start_date', 'repetition_frequency', 'due_date', 'tags', 'priority', 'status', 'description', 'completed_at'
     ];
 
     protected $useSoftDeletes = true; // Enable soft deletes
@@ -65,4 +65,35 @@ class TaskModel extends Model
         return $data;
     }
 
+    public function getTasksRelatedFiles($task_id)
+    {
+        $task_users = $this->select('tasks_files.*')
+            ->join('tasks_files', 'tasks_files.task_id = tasks.id', 'inner')
+            ->where("tasks_files.task_id", $task_id)
+            ->findAll();
+        return $task_users;
+    }
+
+    public function getTasksRelatedFilesByUser($task_id, $user_id)
+    {
+        $task_users = $this->select('tasks_files.*')
+            ->join('tasks_files', 'tasks_files.task_id = tasks.id', 'inner')
+            ->where("tasks_files.task_id", $task_id)
+            ->where("tasks_files.user_id ", $user_id)
+            ->findAll();
+        return $task_users;
+    }
+
+    public function taskFilesArr($task_files)
+    {
+        $data = [];
+        foreach ($task_files as $task_file)
+        {
+            $data[] = [
+                "id" => $task_file['id'],
+                "name" => $task_file['file_name'].' '.$task_file['file_path'],
+            ];
+        }
+        return $data;
+    }
 }

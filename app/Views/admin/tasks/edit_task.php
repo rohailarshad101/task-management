@@ -42,17 +42,6 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-
-<!--                        <div class="form-group">-->
-<!--                            <label for="responsible_persons">Responsible Persons</label>-->
-<!--                            <label for="category">Category</label>-->
-<!--                            <select class="form-control" id="responsible_persons" name="responsible_persons" required>-->
-<!--                                --><?php //foreach ($users as $user): ?>
-<!--                                    <option value="--><?php //= $user['id'] ?><!--" --><?php //= $task['category_id'] == $user['id'] ? 'selected' : '' ?><!-- >--><?php //= $user['first_name'].''.$user['last_name'] ?><!--</option>-->
-<!--                                --><?php //endforeach; ?>
-<!--                            </select>-->
-<!--                        </div>-->
-
                         <div class="form-group">
                             <label for="start_date">Start Date</label>
                             <div id="datepicker-start_date" class="input-group date datepicker">
@@ -64,7 +53,6 @@
                         </div>
                         <div class="form-group">
                             <label for="due_date">Due Date</label>
-                            <!--                            <input type="date" class="form-control" id="due_date" name="due_date" required>-->
                             <div id="datepicker-due_date" class="input-group date datepicker">
                                 <input type="text" id="due_date" name="due_date" class="form-control" value="<?= $task['due_date'] ?>" required>
                                 <span class="input-group-addon input-group-append border-left">
@@ -84,11 +72,17 @@
                         <div class="form-group">
                             <label for="status">Status</label>
                             <select class="form-control" id="status" name="status" required>
-                                <option value="active" <?= $task['status'] == 'Active' ? 'selected' : '' ?>>Active
-                                </option>
-                                <option value="completed" <?= $task['status'] == 'Completed' ? 'selected' : '' ?>>
-                                    Completed
-                                </option>
+                                <?php foreach ($task_statuses_array as $key => $val): ?>
+                                    <option value="<?= $key ?>" <?= $task['status'] == $key ? 'selected' : '' ?>><?= $val ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Re Assign</label>
+                            <select class="form-control" id="repetition_frequency" name="repetition_frequency" required>
+                                <?php foreach ($task_repetition_frequency_array as $key => $val): ?>
+                                    <option value="<?= $key ?>" <?= $task['repetition_frequency'] == $key ? 'selected' : '' ?>><?= $val ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="form-group">

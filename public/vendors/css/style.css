@@ -26317,7 +26317,8 @@ dl li {
 .email-wrapper .message-body .attachments-sections ul {
   list-style: none;
   border-top: 1px solid #e0e0ef;
-  padding: 30px 15px 20px;
+  padding: 15px 15px 20px;
+  /*!*padding: 30px 15px 20px;*! old value*/
 }
 
 .email-wrapper .message-body .attachments-sections ul li {
@@ -29371,3 +29372,17 @@ div.tagsinput span.tag a {
 }
 
 /*# sourceMappingURL=maps/style.css.map */
+
+#loader {
+    width: 200px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 11000;
+}
+
+#loader img {
+    width: 50px; /* Adjust size */
+    height: 50px; /* Adjust size */
+}

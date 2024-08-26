@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\NotificationModel;
 use App\Models\UserModel;
 
 class AuthController extends BaseController
@@ -28,11 +29,21 @@ class AuthController extends BaseController
                     'username' => $user['username'],
                     'role_id' => $user['role_id'],
                     'role_name' => $user_role['name'],
+                    'middle_url' => ((int)$user['role_id'] === 1) ? "admin" : "user",
                     'logged_in' => true
                 ]);
                 if((int)$user['role_id'] === 1){
                     $redirect = "/admin/dashboard";
                 }else{
+                    // Fetch unread notifications for the logged-in user
+                    $notificationModel = new NotificationModel();
+                    $notifications = $notificationModel->where('user_id', $user['id'])
+                        ->where('is_read', 0)
+                        ->orderBy('created_at', 'DESC')
+                        ->findAll();
+
+                    // Pass the notifications to the view or store in session
+                    $session->set('notifications', $notifications);
                     $redirect = "/user/dashboard";
                 }
                 return redirect()->to($redirect);

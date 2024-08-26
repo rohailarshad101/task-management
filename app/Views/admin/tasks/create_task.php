@@ -74,20 +74,22 @@
                         <div class="form-group">
                             <label for="status">Status</label>
                             <select class="form-control" id="status" name="status" required>
-                                <option value="Active">Active</option>
-                                <option value="Completed">Completed</option>
-                                <option value="On Hold">On Hold</option>
+                                <?php foreach ($task_statuses_array as $key => $val): ?>
+                                    <option value="<?= $key ?>"><?= $val ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Re Assign</label>
+                            <select class="form-control" id="repetition_frequency" name="repetition_frequency" required>
+                                <?php foreach ($task_repetition_frequency_array as $key => $val): ?>
+                                    <option value="<?= $key ?>"><?= $val ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>File upload</label>
                             <input type="hidden" id="task_files" name="task_files" class="file-upload-default" value="">
-<!--                            <div class="input-group col-xs-12">-->
-<!--                                <input type="text" multiple class="form-control file-upload-info" placeholder="Upload file" disabled>-->
-<!--                                <span class="input-group-append">-->
-<!--                                  <button class="file-upload-browse btn btn-primary" type="button" onclick='$("#task_files").trigger("click")'>Upload</button>-->
-<!--                                </span>-->
-<!--                            </div>-->
                             <div class="col-xs-12 grid-margin stretch-card">
                                 <div class="card">
                                     <div class="card-body">

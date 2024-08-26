@@ -5,6 +5,7 @@ $last_name = session()->get('last_name');
 $email = session()->get('email');
 $mobile = session()->get('mobile');
 $role_name = session()->get('role_name');
+$middle_url = session()->get('middle_url');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +15,7 @@ $role_name = session()->get('role_name');
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
+<!--    <meta name="referrer" content="no-referrer">-->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="<?= csrf_hash() ?>">
     <title>Task Management</title>
@@ -34,8 +36,8 @@ $role_name = session()->get('role_name');
     <!-- partial:../../partials/_navbar.html -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row default-layout-navbar">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-            <a class="navbar-brand brand-logo" href="<?= base_url() ?>"><img src="<?= base_url() ?>vendors/images/logo.svg" alt="logo"/></a>
-            <a class="navbar-brand brand-logo-mini" href="<?= base_url() ?>vendors/index-2.html">
+            <a class="navbar-brand brand-logo" href="<?= base_url().$middle_url.'/dashboard' ?>"><img src="<?= base_url() ?>vendors/images/logo.svg" alt="logo"/></a>
+            <a class="navbar-brand brand-logo-mini" href="<?= base_url().$middle_url.'/dashboard' ?>">
                 <img src="<?= base_url() ?>vendors/images/logo-mini.svg" alt="logo"/></a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
@@ -47,42 +49,18 @@ $role_name = session()->get('role_name');
                 <li class="nav-item dropdown">
                     <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
                         <i class="fas fa-bell mx-0"></i>
-                        <span class="count">16</span>
+                        <?php
+                        $notifications = session()->get('notifications');
+                        $notification_count = count($notifications);?>
+                        <span class="count"><?= $notification_count ?></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
                         <a class="dropdown-item">
-                            <p class="mb-0 font-weight-normal float-left">You have 16 new notifications
+                            <p class="mb-0 font-weight-normal float-left">You have <?= $notification_count ?> new notifications
                             </p>
                             <span class="badge badge-pill badge-warning float-right">View all</span>
                         </a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                                <div class="preview-icon bg-danger">
-                                    <i class="fas fa-exclamation-circle mx-0"></i>
-                                </div>
-                            </div>
-                            <div class="preview-item-content">
-                                <h6 class="preview-subject font-weight-medium">Application Error</h6>
-                                <p class="font-weight-light small-text">
-                                    Just now
-                                </p>
-                            </div>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                                <div class="preview-icon bg-warning">
-                                    <i class="fas fa-wrench mx-0"></i>
-                                </div>
-                            </div>
-                            <div class="preview-item-content">
-                                <h6 class="preview-subject font-weight-medium">Settings</h6>
-                                <p class="font-weight-light small-text">
-                                    Private message
-                                </p>
-                            </div>
-                        </a>
+                    <?php foreach ($notifications as $notification): ?>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item preview-item">
                             <div class="preview-thumbnail">
@@ -91,12 +69,17 @@ $role_name = session()->get('role_name');
                                 </div>
                             </div>
                             <div class="preview-item-content">
-                                <h6 class="preview-subject font-weight-medium">New user registration</h6>
+                                <h6 class="preview-subject font-weight-medium notification" data-id="<?= $notification['id'] ?>"><?= $notification['title'] ?></h6>
                                 <p class="font-weight-light small-text">
-                                    2 days ago
+                                    <?= insertLineBreakAfterLength($notification['message'], 40) ?>
                                 </p>
+                                <p class="font-weight-light small-text">
+                                    <?= $notification['time_difference'] ?>
+                                </p>
+                                <button class="mark-as-read">Mark as Read</button>
                             </div>
                         </a>
+                    <?php endforeach; ?>
                     </div>
                 </li>
                 <?php } ?>
@@ -179,6 +162,13 @@ $role_name = session()->get('role_name');
     </div>
     <!-- page-body-wrapper ends -->
 </div>
+<div id="content" class="swal-overlay swal-overlay--show-modal" style="opacity: 0.3;">
+    <!-- Content will be updated here -->
+</div>
+<!-- Loader Element -->
+<div id="loader" style="display: none;">
+    <div class="pixel-loader"></div>
+</div>
 <!-- container-scroller -->
 <!-- plugins:js -->
 <script src="<?= base_url() ?>vendors/js/vendor.bundle.base.js"></script>
@@ -194,6 +184,18 @@ $role_name = session()->get('role_name');
 <!-- endinject -->
 <script type="text/javascript">
     $(document).ready(function () {
+        // Show loader before AJAX request starts
+        $(document).ajaxStart(function() {
+            $('#content').show();
+            $('#loader').show();
+        });
+
+        // Hide loader after AJAX request completes
+        $(document).ajaxStop(function() {
+            $('#content').hide();
+            $('#loader').hide();
+        });
+
         if ($(".datepicker").length) {
             $('#datepicker-start_date').datepicker({
                 startDate: new Date(),
@@ -214,6 +216,32 @@ $role_name = session()->get('role_name');
                 format: 'dd-mm-yyyy'
             });
         }
+
+        // Click event for the "Mark as Read" button
+        $('.mark-as-read').on('click', function() {
+            // Get the notification ID from the parent element
+            var notificationId = $(this).closest('.notification').data('id');
+
+            // AJAX request to mark the notification as read
+            $.ajax({
+                url: '/user/notifications/mark-as-read',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    notification_ids: [notificationId]
+                }),
+                success: function(response) {
+                    alert(response.message);
+
+                    // Optionally, you can remove or hide the notification
+                    $(this).closest('.notification').remove();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    alert('Failed to mark notification as read.');
+                }
+            });
+        });
     });
 
 </script>

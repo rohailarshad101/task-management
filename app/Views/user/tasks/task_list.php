@@ -70,6 +70,7 @@
                                     <label class="badge <?= $priority ?> badge-pill"><?= $task['priority'] ?></label>
                                 </td>
                                 <td><?php
+                                    $status = "";
                                     switch ($task['status'])
                                     {
                                         case "Active":
@@ -80,9 +81,22 @@
                                             $status = "badge-primary";
                                             break;
 
-                                        case "High":
+                                        case "Canceled":
                                             $status = "badge-danger";
                                             break;
+
+                                        case "Closed":
+                                            $status = "badge-dark";
+                                            break;
+
+                                        case "In Progress":
+                                            $status = "badge-info";
+                                            break;
+
+                                        case "On Hold":
+                                            $status = "badge-warning";
+                                            break;
+
                                     }
                                     ?>
                                     <label class="badge <?= $status ?> badge-pill"><?= $task['status'] ?></label></td>

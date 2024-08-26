@@ -60,6 +60,19 @@
             margin-left: 80px;
             width: calc(100% - 80px);
         }
+
+        #loader {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+
+        #loader img {
+            width: 50px; /* Adjust size */
+            height: 50px; /* Adjust size */
+        }
     </style>
 </head>
 <body id="body-pd">
@@ -93,7 +106,10 @@
             <div id="toastContainer" class="toast-container"></div>
         </div>
     </div>
-
+    <!-- Loader Element -->
+    <div id="loader" style="display: none;">
+        <img src="loader.gif" alt="Loading..."> <!-- Replace with your loader image or spinner -->
+    </div>
 <!--Container Main end-->
 
 <!--<div class="sidebar" id="sidebar">-->
@@ -113,7 +129,17 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
 <script>
+    $(document).ready(function() {
+        // Show loader before AJAX request starts
+        $(document).ajaxStart(function() {
+            $('#loader').show();
+        });
 
+        // Hide loader after AJAX request completes
+        $(document).ajaxStop(function() {
+            $('#loader').hide();
+        });
+    });
     document.addEventListener("DOMContentLoaded", function(event) {
 
         const showNavbar = (toggleId, navId, bodyId, headerId) =>{

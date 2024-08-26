@@ -6,11 +6,20 @@ use App\Models\CategoryModel;
 use App\Models\TaskModel;
 use App\Models\UserModel;
 use CodeIgniter\Controller;
+use Config\CustomConfig;
 
 class UserTaskController extends Controller
 {
+    protected $customConfig = '';
+
+    public function __construct()
+    {
+        $this->customConfig = config('CustomConfig');
+    }
+
     public function index()
     {
+        $data['task_statuses_array'] = $this->customConfig->task_statuses_array_for_user;
         $user_id = session()->get('user_id');
         $user_related_tasks = new TaskModel();
         $data['tasks'] = $user_related_tasks->getUserRelatedTasks($user_id);
@@ -20,6 +29,7 @@ class UserTaskController extends Controller
 
     public function create()
     {
+        $data['task_statuses_array'] = $this->customConfig->task_statuses_array_for_user;
         $categoryModel = new CategoryModel();
         $data['categories'] = $categoryModel->findAll();
 
@@ -53,6 +63,7 @@ class UserTaskController extends Controller
 
     public function edit($id)
     {
+        $data['task_statuses_array'] = $this->customConfig->task_statuses_array_for_user;
         $taskModel = new TaskModel();
         $categoryModel = new CategoryModel();
 
@@ -62,26 +73,30 @@ class UserTaskController extends Controller
         return view('user/tasks/edit_task', $data);
     }
 
-    public function update($id)
+    public function updateTask($id)
     {
-        $model = new TaskModel();
-
-        $data = [
-            'title' => $this->request->getPost('title'),
-            'category_id' => $this->request->getPost('category_id'),
-            'responsible_persons' => $this->request->getPost('responsible_persons'),
-            'start_date' => $this->request->getPost('start_date'),
-            'due_date' => $this->request->getPost('due_date'),
-//            'tags' => implode(',', $this->request->getPost('tags')),
-            'tags' => $this->request->getPost('tags'),
-            'priority' => $this->request->getPost('priority'),
-            'status' => $this->request->getPost('status'),
-            'description' => $this->request->getPost('description')
-        ];
-
-        $model->update($id, $data);
-
-        return redirect()->to('/user/tasks');
+        $post = $this->request->getPost();
+        echo "<pre>";
+        print_r($post);
+        die();
+//        $model = new TaskModel();
+//
+//        $data = [
+//            'title' => $this->request->getPost('title'),
+//            'category_id' => $this->request->getPost('category_id'),
+//            'responsible_persons' => $this->request->getPost('responsible_persons'),
+//            'start_date' => $this->request->getPost('start_date'),
+//            'due_date' => $this->request->getPost('due_date'),
+////            'tags' => implode(',', $this->request->getPost('tags')),
+//            'tags' => $this->request->getPost('tags'),
+//            'priority' => $this->request->getPost('priority'),
+//            'status' => $this->request->getPost('status'),
+//            'description' => $this->request->getPost('description')
+//        ];
+//
+//        $model->update($id, $data);
+//
+//        return redirect()->to('/user/tasks');
     }
 
     public function delete($id = null)

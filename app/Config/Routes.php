@@ -14,6 +14,9 @@ $routes->get('/logout', 'AuthController::logout');
 $routes->group('', ['filter' => 'authfilter'], static function ($routes) {
     $routes->group('', ['namespace' => "App\Controllers\Admin"], static function ($routes) {
         $routes->group('admin', static function ($routes) {
+            // get task detail
+            $routes->post('task/detail', 'TaskController::getTaskDetails');
+
             $routes->get('dashboard', 'AdminController::dashboard');
             $routes->get('profile', 'AdminController::profile');
             $routes->get('update/profile/(:num)', 'AdminController::profile');
@@ -28,6 +31,8 @@ $routes->group('', ['filter' => 'authfilter'], static function ($routes) {
                 $routes->post('tasks/upload-file', 'TaskController::uploadTaskFile');
                 $routes->post('tasks/delete-file', 'TaskController::deleteTaskFile');
             });
+
+
 
 
             $routes->get('categories', 'CategoryController::index');
@@ -53,9 +58,11 @@ $routes->group('', ['filter' => 'authfilter'], static function ($routes) {
             $routes->get('tasks', 'UserTaskController::index');
             $routes->post('tasks/store', 'UserTaskController::store');
             $routes->get('tasks/edit/(:num)', 'UserTaskController::edit/$1');
-            $routes->post('tasks/update/(:num)', 'UserTaskController::update/$1');
+            $routes->post('task/update/(:num)', 'UserTaskController::updateTask/$1');
+            $routes->post('notifications/mark-as-read', 'NotificationController::markAsRead');
         });
     });
+    $routes->get('download/(:any)', 'DownloadController::downloadFile/$1');
 //    $routes->get('/user/dashboard', 'UsersController::dashboard');
 });
 
