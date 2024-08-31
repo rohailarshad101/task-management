@@ -6,6 +6,16 @@ $email = session()->get('email');
 $mobile = session()->get('mobile');
 $role_name = session()->get('role_name');
 $middle_url = session()->get('middle_url');
+$profile_picture = session()->get('profile_picture');
+if(empty($profile_picture)){
+    $profile_picture = 'vendors/images/faces/default.png';
+}
+$notification_count = 0;
+$notifications = session()->get('notifications');
+if(!is_null($notifications)){
+    $notification_count = count($notifications);
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,47 +55,17 @@ $middle_url = session()->get('middle_url');
                 <span class="fas fa-bars"></span>
             </button>
             <ul class="navbar-nav navbar-nav-right">
-                <?php if ($role_id !== 1 && ($role_id == 2 || $role_id == 3)){?>
+                <?php if ($role_id !== 1 && ($role_id == 2 || $role_id == 3)) {?>
                 <li class="nav-item dropdown">
-                    <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
+                    <a class="nav-link count-indicator" id="notificationDropdown" href="javascript:void(0)" data-toggle="modal" data-target="#notificationModal" data-whatever="@mdo" data-backdrop="static" data-keyboard="false">
                         <i class="fas fa-bell mx-0"></i>
-                        <?php
-                        $notifications = session()->get('notifications');
-                        $notification_count = count($notifications);?>
                         <span class="count"><?= $notification_count ?></span>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-                        <a class="dropdown-item">
-                            <p class="mb-0 font-weight-normal float-left">You have <?= $notification_count ?> new notifications
-                            </p>
-                            <span class="badge badge-pill badge-warning float-right">View all</span>
-                        </a>
-                    <?php foreach ($notifications as $notification): ?>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                                <div class="preview-icon bg-info">
-                                    <i class="far fa-envelope mx-0"></i>
-                                </div>
-                            </div>
-                            <div class="preview-item-content">
-                                <h6 class="preview-subject font-weight-medium notification" data-id="<?= $notification['id'] ?>"><?= $notification['title'] ?></h6>
-                                <p class="font-weight-light small-text">
-                                    <?= insertLineBreakAfterLength($notification['message'], 40) ?>
-                                </p>
-                                <p class="font-weight-light small-text">
-                                    <?= $notification['time_difference'] ?>
-                                </p>
-                                <button class="mark-as-read">Mark as Read</button>
-                            </div>
-                        </a>
-                    <?php endforeach; ?>
-                    </div>
                 </li>
                 <?php } ?>
                 <li class="nav-item nav-profile dropdown">
                     <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                        <img src="<?= base_url() ?>vendors/images/faces/face5.jpg" alt="profile"/>
+                        <img src="<?= base_url().$profile_picture ?>" alt="profile"/>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                         <?php
@@ -120,7 +100,7 @@ $middle_url = session()->get('middle_url');
                 <li class="nav-item nav-profile">
                     <div class="nav-link">
                         <div class="profile-image">
-                            <img src="<?= base_url() ?>vendors/images/faces/face5.jpg" alt="image"/>
+                            <img src="<?= base_url().$profile_picture ?>" alt="image"/>
                         </div>
                         <div class="profile-name">
                             <p class="name">
@@ -165,6 +145,43 @@ $middle_url = session()->get('middle_url');
 <div id="content" class="swal-overlay swal-overlay--show-modal" style="opacity: 0.3;">
     <!-- Content will be updated here -->
 </div>
+<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">You have <?= $notification_count ?> new notifications</h5>
+            </div>
+            <div class="modal-body">
+                <div class="preview-list">
+                    <?php if($notification_count > 0) { ?>
+                    <?php foreach ($notifications as $notification): ?>
+                    <div class="preview-item px-0">
+                        <div class="preview-thumbnail">
+                            <div class="preview-icon bg-info">
+                                <i class="far fa-envelope mx-0"></i>
+                            </div>
+                        </div>
+                        <div class="preview-item-content flex-grow">
+                            <h6 class="preview-subject ellipsis font-weight-medium" data-id="<?= $notification['id'] ?>"><?= $notification['title'] ?>
+                                <span class="float-right font-weight-light small-text"><?= $notification['time_difference'] ?></span>
+                            </h6>
+                            <p class="font-weight-light small-text">
+                                <?= insertLineBreakAfterLength($notification['message'], 40) ?>
+                            </p>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                    <?php } ?>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success">Mark All as read</button>
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Loader Element -->
 <div id="loader" style="display: none;">
     <div class="pixel-loader"></div>
@@ -179,6 +196,7 @@ $middle_url = session()->get('middle_url');
 <script src="<?= base_url() ?>vendors/js/dashboard.js"></script>
 <script src="<?= base_url() ?>vendors/js/data-table.js"></script>
 <script src="<?= base_url() ?>vendors/js/select2.js"></script>
+<script src="<?= base_url() ?>vendors/js/tooltips.js"></script>
 <!--<script src="--><?php //= base_url() ?><!--vendors/js/file-upload.js"></script>-->
 
 <!-- endinject -->
@@ -217,7 +235,6 @@ $middle_url = session()->get('middle_url');
             });
         }
 
-        // Click event for the "Mark as Read" button
         $('.mark-as-read').on('click', function() {
             // Get the notification ID from the parent element
             var notificationId = $(this).closest('.notification').data('id');

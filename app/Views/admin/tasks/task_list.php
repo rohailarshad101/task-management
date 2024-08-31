@@ -1,7 +1,10 @@
 <?= $this->extend('layout/index') ?>
 
 <?= $this->section('content') ?>
+<?php
+$middle_url = session()->get('middle_url');
 
+?>
 <div class="content-wrapper">
     <div class="page-header">
         <h3 class="page-title">
@@ -184,28 +187,31 @@
                         </div>
                     </div>
                 </div>
-                <form>
+                <form action="/<?= $middle_url; ?>/tasks/update/" method="post" id="task_update_form" class="forms-sample" enctype="multipart/form-data">
+                    <input type="hidden" id="task_id" name="task_id" value="">
                     <div class="form-group">
                         <label for="status">Status</label>
-                        <select class="form-control" id="modalStatus" name="modalStatus" required>
+                        <select class="form-control" id="taskStatus" name="taskStatus" value="" required>
                             <?php foreach ($task_statuses_array as $key => $val): ?>
                                 <option value="<?= $key ?>"><?= $val ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
-
+                    <div class="form-group">
+                        <label for="formFileMultiple" class="col-form-label">File:</label>
+                        <input class="form-control" type="file" id="task_update_files" name="task_update_files" multiple>
+                    </div>
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Message:</label>
-                        <textarea class="form-control" id="message-text"></textarea>
+                        <textarea class="form-control" id="task_comment" name="task_comment" value=""></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" id="update_task_status" >Update Task</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
                     </div>
                 </form>
                 <div class="profile-feed" id="comments">
-
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success">Send message</button>
-                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -216,7 +222,7 @@
         {
             const task_id = $(this).attr("data-id");
             $.ajax({
-                url: '/admin/task/detail',
+                url: '/<?= $middle_url; ?>/tasks/detail',
                 type: 'POST',
                 data: { task_id: task_id },
                 dataType: 'json',
@@ -240,7 +246,6 @@
                                 case "Completed":
                                     fa_file_icon = "fa-file-pdf";
                                     break;
-
                             }
                             task_attachments_html += '<li class="mt-sm-1">';
                             task_attachments_html += '<div class="thumb"><i class="fa '+fa_file_icon+'"></i></div>';
@@ -256,23 +261,29 @@
                         task_attachments_html +='</ul>';
                         // Handle comments
                         let commentsHtml = '';
-                        response.data.comments.forEach(comment => {
+                        response.data.comments.forEach(commentRow => {
+                            let task_comment_attachments = commentRow.task_comment_attachments;
+                            let comment_user = commentRow.comment_user;
+                            console.log(comment_user.profile_picture);
+                            let user_full_name = comment_user.first_name+' ' +comment_user.last_name;
+                            let time_diff = calculateTimeDiff(commentRow.created_at);
                             commentsHtml += '<div class="d-flex align-items-start profile-feed-item">';
-                            commentsHtml += '<img src="<?= site_url() ?>'+comment.comment_user.profile_picture+'" alt="profile" class="img-sm rounded-circle"/>';
-                            let comment_user = comment.comment_user;
-                            let calculate_timeDiff = calculateTimeDiff(comment.created_at);
-                            let time_diff = calculate_timeDiff.daysDifference;
-                            if (time_diff < 1) {
-                                time_diff = calculate_timeDiff.hoursDifference;
-                            }
-                                commentsHtml += '<div class="ml-4">';
-                                    commentsHtml += '<h6>'+comment_user.first_name+' '+comment_user.last_name+' <small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>'+time_diff+'</small></h6>';
-                                    commentsHtml += '<p>'+comment.comment+'.</p>';
-                                commentsHtml += '</div>';
+                            commentsHtml += '<img src="<?= base_url() ?>'+comment_user.profile_picture+'" alt="profile" class="img-sm rounded-circle"/>';
+                            commentsHtml += '<div class="ml-4">';
+                            commentsHtml += '<h6>'+user_full_name+'<small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>'+time_diff+'</small></h6>';
+                            commentsHtml += '<p>'+commentRow.comment+'</p>';
+                            $.each(task_comment_attachments, function(index, attachment) {
+                                // Simplify the file path
+                                attachment.file_path = attachment.file_path.replace(/\\\\/g, '\\');
+                                commentsHtml += '<img src="<?= base_url() ?>'+attachment.file_path+'" alt="sample" class="rounded mw-100"/>';
+                            });
+
+                            commentsHtml += '</div>';
                             commentsHtml += '</div>';
                         });
                         $('#attachments').html(task_attachments_html);
                         $('#comments').html(commentsHtml);
+                        $("#task_id").val(task_id);
                         $('#update_task_modal').modal('show');
                     }
                 },
@@ -282,26 +293,45 @@
             });
         });
 
-        function calculateTimeDiff(created_at) {
-            let datetimeString = "2024-08-15 10:45:00";
-
-            // Convert the datetime string to a Date object
-            let givenDate = new Date(created_at);
-
-            // Get the current date and time
-            let currentDate = new Date();
-
-            // Calculate the difference in milliseconds
-            let timeDifference = currentDate - givenDate;
-
-            // Convert the difference from milliseconds to days
-            let daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-            // Convert the difference from milliseconds to hours
-            let hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
-
-            return { "hoursDifference": hoursDifference+" hours ago", "daysDifference": daysDifference+" days ago", }
-        }
+        $(document).on('submit', '#task_update_form', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            let form = $(this);
+            let task_id = $("#task_id").val();
+            $.ajax({
+                type:'POST',
+                url: '/<?= $middle_url; ?>/tasks/update/comment/' + task_id,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                async: false,
+                cache: false,
+                data : formData,
+                success: function(response){
+                    if(response.status == "success") {
+                        $.toast({
+                            heading: 'Success',
+                            text: response.message,
+                            showHideTransition: 'slide',
+                            icon: 'success',
+                            loaderBg: '#04B76B',
+                            position: 'top-right'
+                        });
+                        getTaskLatestComment(task_id)
+                        form[0].reset();
+                    } else if(response.status == "error") {
+                        $.toast({
+                            heading: 'Danger',
+                            text: response.message,
+                            showHideTransition: 'slide',
+                            // icon: 'error,
+                            loaderBg: '#f2a654',
+                            position: 'top-right'
+                        })
+                    }
+                }
+            });
+        });
 
         showSwal = function(id) {
             swal({
@@ -328,7 +358,7 @@
             }).then(function(isConfirm) {
                 if (isConfirm) {
                     $.ajax({
-                        url: '/admin/tasks/' + id,
+                        url: '/<?= $middle_url; ?>/tasks/' + id,
                         type: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'), // Include CSRF token if necessary
@@ -363,5 +393,71 @@
             });
         }
     });
+
+    function calculateTimeDiff(created_at) {
+        // Convert the datetime string to a Date object
+        let givenDate = new Date(created_at);
+
+        // Get the current date and time
+        let currentDate = new Date();
+
+        // Calculate the difference in milliseconds
+        let timeDifference = currentDate - givenDate;
+
+        // Calculate the difference in days, hours, minutes, and seconds
+        let daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        let hoursDifference = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutesDifference = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+        let secondsDifference = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+        // Determine the most appropriate time unit to return
+        if (daysDifference > 0) {
+            return `${daysDifference} day(s) ago`;
+        } else if (hoursDifference > 0) {
+            return `${hoursDifference} hour(s) ago`;
+        } else if (minutesDifference > 0) {
+            return `${minutesDifference} minute(s) ago`;
+        } else {
+            return `${secondsDifference} second(s) ago`;
+        }
+    }
+
+    function getTaskLatestComment(task_id) {
+        $.ajax({
+            url: '/<?= $middle_url; ?>/tasks/detail',
+            type: 'POST',
+            data: { task_id: task_id },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status == "success") {
+                    // Handle comments
+                    let commentsHtml = '';
+                    response.data.comments.forEach(commentRow => {
+                        let task_comment_attachments = commentRow.task_comment_attachments;
+                        let comment_user = commentRow.comment_user;
+                        let user_full_name = comment_user.first_name+' ' +comment_user.last_name;
+                        let time_diff = calculateTimeDiff(commentRow.created_at);
+                        commentsHtml += '<div class="d-flex align-items-start profile-feed-item">';
+                        commentsHtml += '<img src="<?= base_url() ?>vendors/images/faces/face19.html" alt="profile" class="img-sm rounded-circle"/>';
+                        commentsHtml += '<div class="ml-4">';
+                        commentsHtml += '<h6>'+user_full_name+'<small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>'+time_diff+'</small></h6>';
+                        commentsHtml += '<p>'+commentRow.comment+'</p>';
+                        $.each(task_comment_attachments, function(index, attachment) {
+                            // Simplify the file path
+                            attachment.file_path = attachment.file_path.replace(/\\\\/g, '\\');
+                            commentsHtml += '<img src="<?= base_url() ?>'+attachment.file_path+'" alt="sample" class="rounded mw-100"/>';
+                        });
+
+                        commentsHtml += '</div>';
+                        commentsHtml += '</div>';
+                    });
+                    $('#comments').html(commentsHtml);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+            }
+        });
+    }
 </script>
 <?= $this->endSection() ?>

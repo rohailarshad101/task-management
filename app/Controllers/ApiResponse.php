@@ -6,7 +6,7 @@ use CodeIgniter\HTTP\ResponseInterface;
 
 class ApiResponse extends BaseController
 {
-    public static function success($message = null, $data, int $code = 200, ResponseInterface $response)
+    public static function success($message = null, $data = [], int $code = 200, ResponseInterface $response)
     {
         $responseBody = [
             'status' => 'success',

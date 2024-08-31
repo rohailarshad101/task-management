@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Models\TaskModel;
+
 class UserBaseController extends BaseController
 {
     public function dashboard()

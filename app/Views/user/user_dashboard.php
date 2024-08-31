@@ -1,7 +1,9 @@
 <?= $this->extend('layout/index') ?>
 
 <?= $this->section('content') ?>
-
+<?php
+$middle_url = session()->get('middle_url');
+?>
 <div class="content-wrapper">
     <div class="page-header">
         <h3 class="page-title">
@@ -210,8 +212,72 @@
     </div>
 </div>
 
-<div class="modal fade" id="update_task_modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
+<!--<div class="modal fade" id="update_task_modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"-->
+<!--     aria-hidden="true">-->
+<!--    <div class="modal-dialog" role="document">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <h5 class="modal-title" id="ModalLabel">Update Task 1</h5>-->
+<!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                    <span aria-hidden="true">&times;</span>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--            <div class="modal-body">-->
+<!--                <div class="email-wrapper wrapper">-->
+<!--                    <div class="message-body">-->
+<!--                        <h5>Attachments</h5>-->
+<!--                        <div class="attachments-sections" id="attachments">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <form action="/users/task/update/" method="post" id="task_update_form" class="forms-sample" enctype="multipart/form-data">-->
+<!--                    <input type="hidden" id="task_id" name="task_id" value="">-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="status">Status</label>-->
+<!--                        <select class="form-control" id="taskStatus" name="taskStatus" value="" required>-->
+<!--                            --><?php //foreach ($task_statuses_array as $key => $val): ?>
+<!--                                <option value="--><?php //= $key ?><!--">--><?php //= $val ?><!--</option>-->
+<!--                            --><?php //endforeach; ?>
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="formFileMultiple" class="col-form-label">File:</label>-->
+<!--                        <input class="form-control" type="file" id="task_update_files" name="task_update_files" multiple>-->
+<!--                    </div>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="message-text" class="col-form-label">Message:</label>-->
+<!--                        <textarea class="form-control" id="task_comment" name="task_comment" value=""></textarea>-->
+<!--                    </div>-->
+<!--                    <div class="modal-footer">-->
+<!--                        <button type="submit" class="btn btn-success" id="update_task_status" >Update Task</button>-->
+<!--                        <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>-->
+<!--                    </div>-->
+<!--                </form>-->
+<!--                <div class="profile-feed">-->
+<!--                    <div class="d-flex align-items-start profile-feed-item">-->
+<!--                        <img src="--><?php //= base_url() ?><!--vendors/images/faces/face19.html" alt="profile"-->
+<!--                             class="img-sm rounded-circle"/>-->
+<!--                        <div class="ml-4">-->
+<!--                            <h6>-->
+<!--                                Dylan Silva-->
+<!--                                <small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>10 hours</small>-->
+<!--                            </h6>-->
+<!--                            <p>-->
+<!--                                When I first got into the online advertising business, I was looking for the magical-->
+<!--                                combination-->
+<!--                                that would put my website into the top search engine rankings-->
+<!--                            </p>-->
+<!--                            <img src="--><?php //= base_url() ?><!--vendors/images/samples/1280x768/5.jpg" alt="sample"-->
+<!--                                 class="rounded mw-100"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<div class="modal fade" id="update_task_modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -228,7 +294,7 @@
                         </div>
                     </div>
                 </div>
-                <form action="/users/task/update/" method="post" id="task_update_form" class="forms-sample" enctype="multipart/form-data">
+                <form action="/<?= $middle_url; ?>/tasks/update/comment/" method="post" id="task_update_form" class="forms-sample" enctype="multipart/form-data">
                     <input type="hidden" id="task_id" name="task_id" value="">
                     <div class="form-group">
                         <label for="status">Status</label>
@@ -251,50 +317,24 @@
                         <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
                     </div>
                 </form>
-                <div class="profile-feed">
-                    <div class="d-flex align-items-start profile-feed-item">
-                        <img src="<?= base_url() ?>vendors/images/faces/face13.jpg" alt="profile"
-                             class="img-sm rounded-circle"/>
-                        <div class="ml-4">
-                            <h6>
-                                Mason Beck
-                                <small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>10 hours</small>
-                            </h6>
-                            <p>
-                                There is no better advertisement campaign that is low cost and also successful at the
-                                same time.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-start profile-feed-item">
-                        <img src="<?= base_url() ?>vendors/images/faces/face16.jpg" alt="profile"
-                             class="img-sm rounded-circle"/>
-                        <div class="ml-4">
-                            <h6>
-                                Willie Stanley
-                                <small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>10 hours</small>
-                            </h6>
-                            <img src="<?= base_url() ?>vendors/images/samples/1280x768/12.jpg" alt="sample"
-                                 class="rounded mw-100"/>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-start profile-feed-item">
-                        <img src="<?= base_url() ?>vendors/images/faces/face19.html" alt="profile"
-                             class="img-sm rounded-circle"/>
-                        <div class="ml-4">
-                            <h6>
-                                Dylan Silva
-                                <small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>10 hours</small>
-                            </h6>
-                            <p>
-                                When I first got into the online advertising business, I was looking for the magical
-                                combination
-                                that would put my website into the top search engine rankings
-                            </p>
-                            <img src="<?= base_url() ?>vendors/images/samples/1280x768/5.jpg" alt="sample"
-                                 class="rounded mw-100"/>
-                        </div>
-                    </div>
+                <div class="profile-feed" id="comments">
+<!--                    <div class="d-flex align-items-start profile-feed-item">-->
+<!--                        <img src="--><?php //= base_url() ?><!--vendors/images/faces/face19.html" alt="profile"-->
+<!--                             class="img-sm rounded-circle"/>-->
+<!--                        <div class="ml-4">-->
+<!--                            <h6>-->
+<!--                                Dylan Silva-->
+<!--                                <small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>10 hours</small>-->
+<!--                            </h6>-->
+<!--                            <p>-->
+<!--                                When I first got into the online advertising business, I was looking for the magical-->
+<!--                                combination-->
+<!--                                that would put my website into the top search engine rankings-->
+<!--                            </p>-->
+<!--                            <img src="--><?php //= base_url() ?><!--vendors/images/samples/1280x768/5.jpg" alt="sample"-->
+<!--                                 class="rounded mw-100"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
             </div>
         </div>
@@ -302,18 +342,131 @@
 </div>
 <script>
     $(function () {
+        // $(".updateTaskBtn").on("click", function (e) {
+        //     const task_id = $(this).attr("data-id");
+        //     $("#ModalLabel").text($("#task_title_" + task_id).val());
+        //     $("#taskStatus").val($("#task_status_" + task_id).val());
+        //     $("#task_id").val(task_id);
+        //     if ($("#task_related_files" + task_id).attr("count") > 0) {
+        //         $("#attachments").html($("#task_related_files" + task_id).html());
+        //     } else {
+        //         $("#attachments").html("<p>No Attachment found</p>");
+        //     }
+        //
+        //     $('#update_task_modal').modal('show');
+        // });
+
         $(".updateTaskBtn").on("click", function (e) {
             const task_id = $(this).attr("data-id");
-            $("#ModalLabel").text($("#task_title_" + task_id).val());
-            $("#taskStatus").val($("#task_status_" + task_id).val());
-            $("#task_id").val(task_id);
-            if ($("#task_related_files" + task_id).attr("count") > 0) {
-                $("#attachments").html($("#task_related_files" + task_id).html());
-            } else {
-                $("#attachments").html("<p>No Attachment found</p>");
-            }
+            $.ajax({
+                url: '/<?= $middle_url; ?>/tasks/detail',
+                type: 'POST',
+                data: { task_id: task_id },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == "success") {
+                        // Handle task details
+                        $("#modalStatus").val($("#task_status_"+task_id).val());
+                        $('#task-title').text(response.data.task.title);
+                        $('#task-description').text(response.data.task.description);
 
-            $('#update_task_modal').modal('show');
+
+                        let task_attachments_html = '';
+                        let fa_file_icon = 'fa-file';
+                        task_attachments_html += '<ul>';
+                        response.data.tasks_related_files.forEach(file => {
+                            switch (file.file_type) {
+                                case "image/jpeg":
+                                    fa_file_icon = "fa-file-image";
+                                    break;
+
+                                case "Completed":
+                                    fa_file_icon = "fa-file-pdf";
+                                    break;
+                            }
+                            task_attachments_html += '<li class="mt-sm-1">';
+                            task_attachments_html += '<div class="thumb"><i class="fa '+fa_file_icon+'"></i></div>';
+                            task_attachments_html += '<div class="details">';
+                            task_attachments_html += '<p class="file-name">'+file.file_name+'</p>';
+                            task_attachments_html += '<div class="buttons">';
+                            task_attachments_html += '<p class="file-size">'+file.file_size+'</p>';
+                            task_attachments_html += '<a href="/download/'+file.file_name+'" class="download">Download</a>';
+                            task_attachments_html += '</div>';
+                            task_attachments_html += '</div>';
+                            task_attachments_html += '</li>';
+                        });
+                        task_attachments_html +='</ul>';
+                        // Handle comments
+                        let commentsHtml = '';
+                        response.data.comments.forEach(commentRow => {
+                            let task_comment_attachments = commentRow.task_comment_attachments;
+                            let comment_user = commentRow.comment_user;
+                            let user_full_name = comment_user.first_name+' ' +comment_user.last_name;
+                            let time_diff = calculateTimeDiff(commentRow.created_at);
+                            commentsHtml += '<div class="d-flex align-items-start profile-feed-item">';
+                            commentsHtml += '<img src="<?= base_url() ?>vendors/images/faces/face19.html" alt="profile" class="img-sm rounded-circle"/>';
+                            commentsHtml += '<div class="ml-4">';
+                            commentsHtml += '<h6>'+user_full_name+'<small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>'+time_diff+'</small></h6>';
+                            commentsHtml += '<p>'+commentRow.comment+'</p>';
+                            $.each(task_comment_attachments, function(index, attachment) {
+                                // Simplify the file path
+                                attachment.file_path = attachment.file_path.replace(/\\\\/g, '\\');
+                                commentsHtml += '<img src="<?= base_url() ?>'+attachment.file_path+'" alt="sample" class="rounded mw-100"/>';
+                            });
+
+                            commentsHtml += '</div>';
+                            commentsHtml += '</div>';
+                        });
+                        $('#attachments').html(task_attachments_html);
+                        $('#comments').html(commentsHtml);
+                        $("#task_id").val(task_id);
+                        $('#update_task_modal').modal('show');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        });
+
+        $(document).on('submit', '#task_update_form', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            let form = $(this);
+            let task_id = $("#task_id").val();
+            $.ajax({
+                type:'POST',
+                url: '/<?= $middle_url; ?>/tasks/update/' + task_id,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                async: false,
+                cache: false,
+                data : formData,
+                success: function(response){
+                    if(response.status == "success") {
+                        $.toast({
+                            heading: 'Success',
+                            text: response.message,
+                            showHideTransition: 'slide',
+                            icon: 'success',
+                            loaderBg: '#04B76B',
+                            position: 'top-right'
+                        });
+                        getTaskLatestComment(task_id)
+                        form[0].reset();
+                    } else if(response.status == "error") {
+                        $.toast({
+                            heading: 'Danger',
+                            text: response.message,
+                            showHideTransition: 'slide',
+                            // icon: 'error,
+                            loaderBg: '#f2a654',
+                            position: 'top-right'
+                        })
+                    }
+                }
+            });
         });
     });
 
@@ -335,7 +488,7 @@
             deleteCallback: function (response, pd) {
                 if (response.status == 'success') {
                     let file_id = response.data['id'];
-                    $.post("/admin/tasks/delete-file",
+                    $.post("/<?= $middle_url; ?>/tasks/delete-file",
                         {
                             file_id: response.data['id']
                         },
@@ -361,27 +514,72 @@
             },
         });
     }
-    $(document).on('submit', '#task_update_form', function(e){
-        e.preventDefault();
-        let formData = new FormData(this);
 
+    function calculateTimeDiff(created_at) {
+        // Convert the datetime string to a Date object
+        let givenDate = new Date(created_at);
+
+        // Get the current date and time
+        let currentDate = new Date();
+
+        // Calculate the difference in milliseconds
+        let timeDifference = currentDate - givenDate;
+
+        // Calculate the difference in days, hours, minutes, and seconds
+        let daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        let hoursDifference = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutesDifference = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+        let secondsDifference = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+        // Determine the most appropriate time unit to return
+        if (daysDifference > 0) {
+            return `${daysDifference} day(s) ago`;
+        } else if (hoursDifference > 0) {
+            return `${hoursDifference} hour(s) ago`;
+        } else if (minutesDifference > 0) {
+            return `${minutesDifference} minute(s) ago`;
+        } else {
+            return `${secondsDifference} second(s) ago`;
+        }
+    }
+
+    function getTaskLatestComment(task_id) {
         $.ajax({
-            type:'POST',
-            url: '/user/task/update/' + $("#task_id").val(),
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'), // Include CSRF token if necessary
+            url: '/user/tasks/detail',
+            type: 'POST',
+            data: { task_id: task_id },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status == "success") {
+                    // Handle comments
+                    let commentsHtml = '';
+                    response.data.comments.forEach(commentRow => {
+                        let task_comment_attachments = commentRow.task_comment_attachments;
+                        let comment_user = commentRow.comment_user;
+                        let user_full_name = comment_user.first_name+' ' +comment_user.last_name;
+                        let time_diff = calculateTimeDiff(commentRow.created_at);
+                        commentsHtml += '<div class="d-flex align-items-start profile-feed-item">';
+                        commentsHtml += '<img src="<?= base_url() ?>vendors/images/faces/face19.html" alt="profile" class="img-sm rounded-circle"/>';
+                        commentsHtml += '<div class="ml-4">';
+                        commentsHtml += '<h6>'+user_full_name+'<small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>'+time_diff+'</small></h6>';
+                        commentsHtml += '<p>'+commentRow.comment+'</p>';
+                        $.each(task_comment_attachments, function(index, attachment) {
+                            // Simplify the file path
+                            attachment.file_path = attachment.file_path.replace(/\\\\/g, '\\');
+                            commentsHtml += '<img src="<?= base_url() ?>'+attachment.file_path+'" alt="sample" class="rounded mw-100"/>';
+                        });
+
+                        commentsHtml += '</div>';
+                        commentsHtml += '</div>';
+                    });
+                    $('#comments').html(commentsHtml);
+                }
             },
-            processData: false,
-            contentType: false,
-            async: false,
-            cache: false,
-            data : new FormData(this),
-            success: function(response){
-                console.log(response)
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
             }
         });
-    });
-
+    }
 
         //     success: function(response) {
         //         var message = response.success ? response.success : response.error;

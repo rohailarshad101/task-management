@@ -2,6 +2,7 @@
 
 namespace Config;
 
+use App\Filters\AdminAuth;
 use App\Filters\AuthFilter;
 use App\Filters\CorsFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
@@ -28,6 +29,7 @@ class Filters extends BaseFilters
      */
     public array $aliases = [
         'authfilter' => AuthFilter::class,
+        'adminAuth' => AdminAuth::class,
         'csrf'          => CSRF::class,
         'toolbar'       => DebugToolbar::class,
         'honeypot'      => Honeypot::class,
@@ -74,16 +76,19 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             'authfilter' => ['except' => ['login', 'logout']],
-            'csrf' => ['except' => ['admin/tasks/*', 'admin/task/*', 'user/notifications/*']],
+            'csrf' => ['except' => ['admin/tasks/*', 'admin/task/*', 'user/notifications/*', 'user/tasks/*']],
         ],
         'after' => [
             // 'honeypot',
             // 'secureheaders',
             'cors' => [
                 'except' => [
+                    'admin/*',
                     'admin/task/*',
                     'admin/tasks/*',
+                    'user/*',
                     'user/notifications/*',
+                    'user/tasks/*',
                 ]
             ]
         ],

@@ -147,7 +147,7 @@ class TaskController extends Controller
         return view('admin/tasks/edit_task', $data);
     }
 
-    public function update($id)
+    public function updateTask($id)
     {
         try {
             $task_model = new TaskModel();
@@ -184,6 +184,43 @@ class TaskController extends Controller
             // Automatically rolled back already.
         }
         return redirect()->to('/admin/tasks');
+    }
+
+    public function updateTaskComment($id)
+    {
+        $post = $this->request->getPost();
+        $user_id = session()->get('user_id');
+        $task_comment = new TaskCommentModel();
+        $data = [
+            'task_id' => $post['task_id'],
+            'user_id' => $user_id,
+            'comment' => $post['task_comment']
+        ];
+        $task_comment->insert($data);
+        // Get the ID of the last inserted record
+        $task_comment_id = $task_comment->insertID();
+
+        $task_update_files = $this->request->getFile('task_update_files');
+        if ($task_update_files->isValid() && !$task_update_files->hasMoved()) {
+            $task_comment_attachment_model = new TaskCommentAttachmentModel();
+            // Define a new filename to avoid conflicts
+            $original_file_name = pathinfo($task_update_files->getName(), PATHINFO_FILENAME);
+            $new_file_name = $original_file_name.'-'.substr($task_update_files->getRandomName(),11);
+
+            // Move the file to the desired directory
+            $filePath = $this->customConfig->file_upload_path['tasks_file_path'];
+            $task_update_files->move($filePath, $new_file_name);
+
+            // Save file details to the database
+            $task_comment_attachment_model->save([
+                'task_comment_id' => $task_comment_id,
+                'file_path' => $filePath.DIRECTORY_SEPARATOR.$new_file_name,
+                'file_size' => formatBytes($task_update_files->getSize())
+            ]);
+        }
+
+        $response = \Config\Services::response();
+        return ApiResponse::success("Task Status added", $data,200, $response);
     }
 
     public function delete($id = null)
@@ -282,7 +319,7 @@ class TaskController extends Controller
             $user_model = new UserModel();
             $task_comment_attachment = new TaskCommentAttachmentModel();
             foreach ($comments as $index => $comment) {
-                $comments[$index]['task_comment_attachment'] = $task_comment_attachment->where('task_comment_id', $comment['id'])->findAll();
+                $comments[$index]['task_comment_attachments'] = $task_comment_attachment->where('task_comment_id', $comment['id'])->findAll();
                 $comments[$index]['comment_user'] = $user_model->where('id', $comment['user_id'])->find()[0];
             }
 

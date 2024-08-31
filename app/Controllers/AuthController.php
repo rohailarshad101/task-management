@@ -18,6 +18,12 @@ class AuthController extends BaseController
             $userModel = new UserModel();
             $user = $userModel->getUserByUsername($username);
             $user_role = $userModel->role($user['id']);
+            // Fetch unread notifications for the logged-in user
+            $notificationModel = new NotificationModel();
+            $notifications = $notificationModel->where('user_id', $user['id'])
+                ->where('is_read', 0)
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
 
             if ($user && password_verify($password, $user['password'])) {
                 $session->set([
@@ -28,24 +34,19 @@ class AuthController extends BaseController
                     'mobile' => $user['mobile'],
                     'username' => $user['username'],
                     'role_id' => $user['role_id'],
+                    'profile_picture' => $user['profile_picture'],
                     'role_name' => $user_role['name'],
+                    'user_role' => $user_role['key'],
                     'middle_url' => ((int)$user['role_id'] === 1) ? "admin" : "user",
-                    'logged_in' => true
+                    'logged_in' => true,
+                    'notifications' => $notifications
                 ]);
                 if((int)$user['role_id'] === 1){
                     $redirect = "/admin/dashboard";
                 }else{
-                    // Fetch unread notifications for the logged-in user
-                    $notificationModel = new NotificationModel();
-                    $notifications = $notificationModel->where('user_id', $user['id'])
-                        ->where('is_read', 0)
-                        ->orderBy('created_at', 'DESC')
-                        ->findAll();
-
-                    // Pass the notifications to the view or store in session
-                    $session->set('notifications', $notifications);
                     $redirect = "/user/dashboard";
                 }
+
                 return redirect()->to($redirect);
             } else {
                 $session->setFlashdata('error', 'Invalid username or password');
