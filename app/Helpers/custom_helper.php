@@ -39,4 +39,18 @@ function insertLineBreakAfterLength($message, $length)
     return $message;
 }
 
+function addTaskComment($task_comment_id, $comment, $status = null)
+{
+    $taskStatusLogModel = new \App\Models\TaskStatusLog();
+
+    $data = [
+        'task_comment_id' => $task_comment_id,
+        'comment' => $comment ?? NULL,
+        'status' => $status ?? 'No status change',
+        'created_at' => date('Y-m-d H:i:s'),
+    ];
+
+    $taskStatusLogModel->save($data);
+}
+
 ?>

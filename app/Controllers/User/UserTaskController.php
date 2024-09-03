@@ -118,40 +118,68 @@ class UserTaskController extends Controller
 
     public function updateTaskComment($id)
     {
-        $post = $this->request->getPost();
-        $user_id = session()->get('user_id');
-        $task_comment = new TaskCommentModel();
-        $data = [
-            'task_id' => $post['task_id'],
-            'user_id' => $user_id,
-            'comment' => $post['task_comment']
-        ];
-        $task_comment->insert($data);
-        // Get the ID of the last inserted record
-        $task_comment_id = $task_comment->insertID();
+        $db = \Config\Database::connect();
+        // Start the transaction
+        $db->transStart();
+        try {
+            $data = [];
+            $post = $this->request->getPost();
+            $user_id = session()->get('user_id');
+            $task_model = new TaskModel();
+            $task_arr = $task_model->find($id);
 
-        $task_update_files = $this->request->getFile('task_update_files');
-        if ($task_update_files->isValid() && !$task_update_files->hasMoved()) {
+            $task_comment = new TaskCommentModel();
+            $data = [
+                'task_id' => $post['task_id'],
+                'user_id' => $user_id,
+                'comment' => $post['task_comment']
+            ];
+            $task_comment->insert($data);
+            // Get the ID of the last inserted record
+            $task_comment_id = $task_comment->insertID();
 
-            $task_comment_attachment_model = new TaskCommentAttachmentModel();
-            // Define a new filename to avoid conflicts
-            $original_file_name = pathinfo($task_update_files->getName(), PATHINFO_FILENAME);
-            $new_file_name = $original_file_name.'-'.substr($task_update_files->getRandomName(),11);
+            $task_update_files = $this->request->getFile('task_update_files');
+            if ($task_update_files->isValid() && !$task_update_files->hasMoved()) {
 
-            // Move the file to the desired directory
-            $filePath = $this->customConfig->file_upload_path['tasks_file_path'];
-            $task_update_files->move($filePath, $new_file_name);
+                $task_comment_attachment_model = new TaskCommentAttachmentModel();
+                // Define a new filename to avoid conflicts
+                $original_file_name = pathinfo($task_update_files->getName(), PATHINFO_FILENAME);
+                $new_file_name = $original_file_name.'-'.substr($task_update_files->getRandomName(),11);
 
-            // Save file details to the database
-            $task_comment_attachment_model->save([
-                'task_comment_id' => $task_comment_id,
-                'file_path' => $filePath.DIRECTORY_SEPARATOR.$new_file_name,
-                'file_size' => formatBytes($task_update_files->getSize())
-            ]);
+                // Move the file to the desired directory
+                $filePath = $this->customConfig->file_upload_path['tasks_file_path'];
+                $task_update_files->move($filePath, $new_file_name);
+
+                // Save file details to the database
+                $task_comment_attachment_model->save([
+                    'task_comment_id' => $task_comment_id,
+                    'file_path' => $filePath.DIRECTORY_SEPARATOR.$new_file_name,
+                    'file_size' => formatBytes($task_update_files->getSize())
+                ]);
+            }
+            if($task_arr['status'] !== $post['task_status']){
+                $task_status_log = "Task Status Changed From ".$task_arr['status']." to ".$post['task_status'];
+            }else if($task_arr['status'] == $post['task_status'] && !empty($post['task_comment'])){
+                $task_status_log = "User Commented against the task ".$post['task_comment'];
+            }
+            addTaskComment($task_comment_id, $task_status_log, $post['task_status']);
+
+            // Complete the transaction
+            $db->transComplete();
+            // Check the transaction status
+            if ($db->transStatus() === false) {
+                // If something went wrong, rollback
+                $db->transRollback();
+                return $this->response->setStatusCode(500)->setJSON(['error' => 'Error occurred while saving the task comment.']);
+            }
+
+            $response = \Config\Services::response();
+            return ApiResponse::success("Task Status added", $data,200, $response);
+        } catch (\Exception $e) {
+            // Rollback manually if an exception occurs
+            $db->transRollback();
+            return 'Transaction failed: ' . $e->getMessage();
         }
-
-        $response = \Config\Services::response();
-        return ApiResponse::success("Task Status added", $data,200, $response);
     }
 
     public function delete($id = null)

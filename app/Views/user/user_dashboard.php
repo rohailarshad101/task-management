@@ -112,36 +112,36 @@ $middle_url = session()->get('middle_url');
                                     </td>
                                     <td>
                                         <?php
-                                            $disabled = false;
-                                            switch ($task['status'])
-                                            {
-                                                case "Active":
-                                                    $status = "badge-success";
-                                                    break;
+                                        $disabled = false;
+                                        switch ($task['status'])
+                                        {
+                                            case "Active":
+                                                $status = "badge-success";
+                                                break;
 
-                                                case "Completed":
-                                                    $status = "badge-primary";
-                                                    $disabled = true;
-                                                    break;
+                                            case "Completed":
+                                                $status = "badge-primary";
+                                                $disabled = true;
+                                                break;
 
-                                                case "Canceled":
-                                                    $status = "badge-danger";
-                                                    break;
+                                            case "Canceled":
+                                                $status = "badge-danger";
+                                                break;
 
-                                                case "Closed":
-                                                    $status = "badge-dark";
-                                                    $disabled = true;
-                                                    break;
+                                            case "Closed":
+                                                $status = "badge-dark";
+                                                $disabled = true;
+                                                break;
 
-                                                case "In Progress":
-                                                    $status = "badge-info";
-                                                    break;
+                                            case "In Progress":
+                                                $status = "badge-info";
+                                                break;
 
-                                                case "On Hold":
-                                                    $status = "badge-warning";
-                                                    break;
+                                            case "On Hold":
+                                                $status = "badge-warning";
+                                                break;
 
-                                            }
+                                        }
                                         ?>
                                         <label class="badge <?= $status ?> badge-pill"><?= $task['status'] ?></label>
                                         <input type="hidden" id="task_status_<?= $task['task_id'] ?>" value="<?= $task['status'] ?>">
@@ -298,7 +298,7 @@ $middle_url = session()->get('middle_url');
                     <input type="hidden" id="task_id" name="task_id" value="">
                     <div class="form-group">
                         <label for="status">Status</label>
-                        <select class="form-control" id="taskStatus" name="taskStatus" value="" required>
+                        <select class="form-control" id="task_status" name="task_status" value="" required>
                             <?php foreach ($task_statuses_array as $key => $val): ?>
                                 <option value="<?= $key ?>"><?= $val ?></option>
                             <?php endforeach; ?>
@@ -318,23 +318,23 @@ $middle_url = session()->get('middle_url');
                     </div>
                 </form>
                 <div class="profile-feed" id="comments">
-<!--                    <div class="d-flex align-items-start profile-feed-item">-->
-<!--                        <img src="--><?php //= base_url() ?><!--vendors/images/faces/face19.html" alt="profile"-->
-<!--                             class="img-sm rounded-circle"/>-->
-<!--                        <div class="ml-4">-->
-<!--                            <h6>-->
-<!--                                Dylan Silva-->
-<!--                                <small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>10 hours</small>-->
-<!--                            </h6>-->
-<!--                            <p>-->
-<!--                                When I first got into the online advertising business, I was looking for the magical-->
-<!--                                combination-->
-<!--                                that would put my website into the top search engine rankings-->
-<!--                            </p>-->
-<!--                            <img src="--><?php //= base_url() ?><!--vendors/images/samples/1280x768/5.jpg" alt="sample"-->
-<!--                                 class="rounded mw-100"/>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <!--                    <div class="d-flex align-items-start profile-feed-item">-->
+                    <!--                        <img src="--><?php //= base_url() ?><!--vendors/images/faces/face19.html" alt="profile"-->
+                    <!--                             class="img-sm rounded-circle"/>-->
+                    <!--                        <div class="ml-4">-->
+                    <!--                            <h6>-->
+                    <!--                                Dylan Silva-->
+                    <!--                                <small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>10 hours</small>-->
+                    <!--                            </h6>-->
+                    <!--                            <p>-->
+                    <!--                                When I first got into the online advertising business, I was looking for the magical-->
+                    <!--                                combination-->
+                    <!--                                that would put my website into the top search engine rankings-->
+                    <!--                            </p>-->
+                    <!--                            <img src="--><?php //= base_url() ?><!--vendors/images/samples/1280x768/5.jpg" alt="sample"-->
+                    <!--                                 class="rounded mw-100"/>-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
                 </div>
             </div>
         </div>
@@ -436,7 +436,7 @@ $middle_url = session()->get('middle_url');
             let task_id = $("#task_id").val();
             $.ajax({
                 type:'POST',
-                url: '/<?= $middle_url; ?>/tasks/update/' + task_id,
+                url: '/<?= $middle_url; ?>/tasks/update/comment/' + task_id,
                 dataType: 'json',
                 processData: false,
                 contentType: false,
@@ -581,30 +581,30 @@ $middle_url = session()->get('middle_url');
         });
     }
 
-        //     success: function(response) {
-        //         var message = response.success ? response.success : response.error;
-        //         $.toast({
-        //             heading: 'Success',
-        //             text: message,
-        //             showHideTransition: 'slide',
-        //             icon: 'success',
-        //             loaderBg: '#f96868',
-        //             position: 'top-right'
-        //         })
-        //         setTimeout(function() {
-        //             location.reload();
-        //         }, 2000); // Adjust the delay as needed
-        //     },
-        //     error: function(xhr, status, error) {
-        //         $.toast({
-        //             heading: 'Danger',
-        //             text: message,
-        //             showHideTransition: 'slide',
-        //             icon: 'error',
-        //             loaderBg: '#f2a654',
-        //             position: 'top-right'
-        //         })
-        //     }
+    //     success: function(response) {
+    //         var message = response.success ? response.success : response.error;
+    //         $.toast({
+    //             heading: 'Success',
+    //             text: message,
+    //             showHideTransition: 'slide',
+    //             icon: 'success',
+    //             loaderBg: '#f96868',
+    //             position: 'top-right'
+    //         })
+    //         setTimeout(function() {
+    //             location.reload();
+    //         }, 2000); // Adjust the delay as needed
+    //     },
+    //     error: function(xhr, status, error) {
+    //         $.toast({
+    //             heading: 'Danger',
+    //             text: message,
+    //             showHideTransition: 'slide',
+    //             icon: 'error',
+    //             loaderBg: '#f2a654',
+    //             position: 'top-right'
+    //         })
+    //     }
 
 </script>
 <?= $this->endSection() ?>
