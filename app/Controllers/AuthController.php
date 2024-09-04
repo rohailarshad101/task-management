@@ -12,27 +12,33 @@ class AuthController extends BaseController
         $session = session();
 
         if (strtolower($this->request->getMethod()) === 'post') {
-            $username = $this->request->getPost('username');
+            $user_email = $this->request->getPost('user_email');
             $password = $this->request->getPost('password');
-
             $userModel = new UserModel();
-            $user = $userModel->getUserByUsername($username);
-            $user_role = $userModel->role($user['id']);
-            // Fetch unread notifications for the logged-in user
-            $notificationModel = new NotificationModel();
-            $notifications = $notificationModel->where('user_id', $user['id'])
-                ->where('is_read', 0)
-                ->orderBy('created_at', 'DESC')
-                ->findAll();
+            $user = $userModel->where('email', $user_email)->first(); // Fetch user by user_email
 
-            if ($user && password_verify($password, $user['password'])) {
+            if ($user === null) {
+                // No user found with the provided user_email
+                $session->setFlashdata('error', 'User not found');
+            } elseif (!password_verify($password, $user['password'])) {
+                // Password does not match
+                $session->setFlashdata('error', 'Invalid password');
+            }else{
+                $user = $userModel->getUserByUserEmail($user_email);
+                $user_role = $userModel->role($user['id']);
+                // Fetch unread notifications for the logged-in user
+                $notificationModel = new NotificationModel();
+                $notifications = $notificationModel->where('user_id', $user['id'])
+                    ->where('is_read', 0)
+                    ->orderBy('created_at', 'DESC')
+                    ->findAll();
+
                 $session->set([
                     'user_id' => $user['id'],
                     'first_name' => $user['first_name'],
                     'last_name' => $user['last_name'],
                     'email' => $user['email'],
                     'mobile' => $user['mobile'],
-                    'username' => $user['username'],
                     'role_id' => $user['role_id'],
                     'profile_picture' => $user['profile_picture'],
                     'role_name' => $user_role['name'],
@@ -48,12 +54,8 @@ class AuthController extends BaseController
                 }
 
                 return redirect()->to($redirect);
-            } else {
-                $session->setFlashdata('error', 'Invalid username or password');
             }
-
         }
-
         return view('login');
     }
 

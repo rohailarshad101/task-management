@@ -46,122 +46,92 @@ $middle_url = session()->get('middle_url');
                                 </tr>
                             </thead>
                             <tbody>
-                            <?php foreach ($tasks as $task): ?>
-                            <tr>
-                                <td class="font-weight-bold">
-                                    <?= $task['task_name'] ?>
-                                    <input type="hidden" id="task_title_<?= $task['task_id'] ?>" value="<?= $task['task_name'] ?>">
-                                </td>
-                                <td class="font-weight-bold"><?= $task['category_name'] ?></td>
-                                <td>
-                                <?php foreach ($task['responsible_persons'] as $responsible_person): ?>
-                                    <span class="font-weight-bold btn btn-info">
-                                        <?= $responsible_person['name'] ?>
-                                    </span>
+
+                            <?php if(count($tasks) > 0){ ?>
+                                <?php foreach ($tasks as $task): ?>
+                                <tr>
+                                    <td class="font-weight-bold">
+                                        <?= $task['task_name'] ?>
+                                        <input type="hidden" id="task_title_<?= $task['task_id'] ?>" value="<?= $task['task_name'] ?>">
+                                    </td>
+                                    <td class="font-weight-bold"><?= $task['category_name'] ?></td>
+                                    <td>
+                                    <?php foreach ($task['responsible_persons'] as $responsible_person): ?>
+                                        <span class="font-weight-bold btn btn-info">
+                                            <?= $responsible_person['name'] ?>
+                                        </span>
+                                    <?php endforeach; ?>
+                                    </td>
+                                    <td><?= $task['start_date'] ?></td>
+                                    <td><?= $task['due_date'] ?></td>
+                                    <td><?= $task['completed_at'] ?></td>
+                                    <td><?php
+                                        switch ($task['priority'])
+                                        {
+                                            case "Low":
+                                                $priority = "badge-success";
+                                                break;
+
+                                            case "Medium":
+                                                $priority = "badge-warning";
+                                                break;
+
+                                            case "High":
+                                                $priority = "badge-danger";
+                                                break;
+                                        }
+                                        ?>
+                                        <label class="badge <?= $priority ?> badge-pill"><?= $task['priority'] ?></label>
+                                    </td>
+                                    <td><?php
+                                        $hide_edit_btn = false;
+                                        switch ($task['status'])
+                                        {
+                                            case "Active":
+                                                $status = "badge-success";
+                                                break;
+
+                                            case "Completed":
+                                                $status = "badge-primary";
+                                                break;
+
+                                            case "Canceled":
+                                                $status = "badge-danger";
+                                                break;
+
+                                            case "Closed":
+                                                $status = "badge-dark";
+                                                $hide_edit_btn = true;
+                                                break;
+
+                                            case "In Progress":
+                                                $status = "badge-info";
+                                                break;
+
+                                            case "On Hold":
+                                                $status = "badge-warning";
+                                                break;
+
+                                        }
+                                        ?>
+                                        <label class="badge <?= $status ?> badge-pill"><?= $task['status'] ?></label>
+                                        <input type="hidden" id="task_status_<?= $task['task_id'] ?>" value="<?= $task['status'] ?>">
+                                    </td>
+                                    <td>
+                                        <?php if(!$hide_edit_btn){ ?>
+                                            <a href="/admin/tasks/edit/<?= $task['task_id'] ?>" class="btn btn-primary btn-sm">Edit</a>
+                                        <?php }else{ ?>
+                                            <a href="javascript:void(0)" class="btn btn-secondary btn-sm" disabled="">Edit</a>
+                                        <?php } ?>
+                    <!--                    <a href="/tasks/delete/--><?php //= $task['id'] ?><!--" class="btn btn-danger btn-sm">Delete</a>-->
+                                        <a href="javascript:void(0)" onclick="showSwal(<?= $task['task_id']; ?>)" class="btn btn-danger delete-btn" data-id="<?= $task['task_id']; ?>">Delete</a>
+                                        <a href="javascript:void(0)" class="btn btn-info delete-btn updateTaskBtn" data-id="<?= $task['task_id']; ?>">
+                                            <i class="fa fa-eye text-light-primary"></i> &nbsp;View
+                                        </a>
+                                    </td>
+                                </tr>
                                 <?php endforeach; ?>
-                                </td>
-                                <td><?= $task['start_date'] ?></td>
-                                <td><?= $task['due_date'] ?></td>
-                                <td><?= $task['completed_at'] ?></td>
-                                <td><?php
-                                    switch ($task['priority'])
-                                    {
-                                        case "Low":
-                                            $priority = "badge-success";
-                                            break;
-
-                                        case "Medium":
-                                            $priority = "badge-warning";
-                                            break;
-
-                                        case "High":
-                                            $priority = "badge-danger";
-                                            break;
-                                    }
-                                    ?>
-                                    <label class="badge <?= $priority ?> badge-pill"><?= $task['priority'] ?></label>
-                                </td>
-                                <td><?php
-                                    $hide_edit_btn = false;
-                                    switch ($task['status'])
-                                    {
-                                        case "Active":
-                                            $status = "badge-success";
-                                            break;
-
-                                        case "Completed":
-                                            $status = "badge-primary";
-                                            break;
-
-                                        case "Canceled":
-                                            $status = "badge-danger";
-                                            break;
-
-                                        case "Closed":
-                                            $status = "badge-dark";
-                                            $hide_edit_btn = true;
-                                            break;
-
-                                        case "In Progress":
-                                            $status = "badge-info";
-                                            break;
-
-                                        case "On Hold":
-                                            $status = "badge-warning";
-                                            break;
-
-                                    }
-                                    ?>
-                                    <label class="badge <?= $status ?> badge-pill"><?= $task['status'] ?></label>
-                                    <input type="hidden" id="task_status_<?= $task['task_id'] ?>" value="<?= $task['status'] ?>">
-                                </td>
-                                <td>
-                                    <?php if(!$hide_edit_btn){ ?>
-                                        <a href="/admin/tasks/edit/<?= $task['task_id'] ?>" class="btn btn-primary btn-sm">Edit</a>
-                                    <?php }else{ ?>
-                                        <a href="javascript:void(0)" class="btn btn-secondary btn-sm" disabled="">Edit</a>
-                                    <?php } ?>
-                <!--                    <a href="/tasks/delete/--><?php //= $task['id'] ?><!--" class="btn btn-danger btn-sm">Delete</a>-->
-                                    <a href="javascript:void(0)" onclick="showSwal(<?= $task['task_id']; ?>)" class="btn btn-danger delete-btn" data-id="<?= $task['task_id']; ?>">Delete</a>
-                                    <a href="javascript:void(0)" class="btn btn-info delete-btn updateTaskBtn" data-id="<?= $task['task_id']; ?>">
-                                        <i class="fa fa-eye text-light-primary"></i> &nbsp;View
-                                    </a>
-<!--                                    <div id="task_related_files--><?php //= $task['task_id'] ?><!--" style="display: none" count="--><?php //= count($task['tasks_related_files']) ?><!--">-->
-<!--                                        <ul>-->
-<!--                                            --><?php //foreach ($task['tasks_related_files'] as $file): ?>
-<!--                                                --><?php
-//                                                switch ($file['file_type'])
-//                                                {
-//                                                    case "image/jpeg":
-//                                                        $fa_file_icon = "fa-file-image";
-//                                                        break;
-//
-//                                                    case "Completed":
-//                                                        $fa_file_icon = "fa-file-pdf";
-//                                                        break;
-//
-//                                                    default:
-//                                                        $fa_file_icon = "fa-file";
-//                                                        break;
-//                                                }
-//
-//                                                ?>
-<!--                                                <li class="mt-sm-1">-->
-<!--                                                    <div class="thumb"><i class="fa --><?php //= $fa_file_icon ?><!--"></i></div>-->
-<!--                                                    <div class="details">-->
-<!--                                                        <p class="file-name">--><?php //= $file['file_name']  ?><!--</p>-->
-<!--                                                        <div class="buttons">-->
-<!--                                                            <p class="file-size">--><?php //= $file['file_size']  ?><!--</p>-->
-<!--                                                            <a href="/download/--><?php //= $file['file_name']  ?><!--" class="download">Download</a>-->
-<!--                                                        </div>-->
-<!--                                                    </div>-->
-<!--                                                </li>-->
-<!--                                            --><?php //endforeach; ?>
-<!--                                        </ul>-->
-<!--                                    </div>-->
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
+                            <?php }?>
                             </tbody>
                         </table>
                     </div>

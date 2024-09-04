@@ -8,7 +8,7 @@ class UserModel extends Model
 {
     protected $table = 'users';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['first_name', 'last_name', 'username', 'email', 'mobile', 'password', 'profile_picture', 'role_id', 'is_active'];
+    protected $allowedFields = ['first_name', 'last_name', 'email', 'mobile', 'password', 'profile_picture', 'role_id', 'is_active'];
 
     protected $beforeInsert = ['hashPassword'];
 
@@ -30,9 +30,9 @@ class UserModel extends Model
         return $this->join("roles", 'users.role_id=roles.id', 'left')->where("users.id", $user_id)->first();
     }
     
-    public function getUserByUsername($username)
+    public function getUserByUserEmail($user_email)
     {
-        return $this->where('username', $username)->first();
+        return $this->where('email', $user_email)->first();
     }
 
     public function getAllUsersWithoutAdmin()

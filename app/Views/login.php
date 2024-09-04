@@ -32,18 +32,23 @@
                 <img src="<?= base_url() ?>vendors/images/logo.svg" alt="logo">
               </div>
               <h4>Welcome back!</h4>
+                <?php if (session()->getFlashdata('error')): ?>
+                    <div class="alert alert-danger font-weight-bold">
+                        <?= session()->getFlashdata('error') ?>
+                    </div>
+                <?php endif; ?>
               <h6 class="font-weight-light">Happy to see you again!</h6>
               <form class="pt-3" action="/login" method="post">
                   <?= csrf_field() ?>
                 <div class="form-group">
-                  <label for="exampleInputEmail">Username</label>
+                  <label for="exampleInputEmail">Email</label>
                   <div class="input-group">
                     <div class="input-group-prepend bg-transparent">
                       <span class="input-group-text bg-transparent border-right-0">
                         <i class="fa fa-user text-primary"></i>
                       </span>
                     </div>
-                    <input type="text" class="form-control form-control-lg border-left-0 bg-white" id="username" name="username" placeholder="Username" required>
+                    <input type="email" class="form-control form-control-lg border-left-0 bg-white" id="user_email" name="user_email" placeholder="Enter your Email" required>
                   </div>
                 </div>
                 <div class="form-group">

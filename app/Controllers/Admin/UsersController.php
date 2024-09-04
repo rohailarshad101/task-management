@@ -2,35 +2,44 @@
 
 namespace App\Controllers\Admin;
 
+use App\Models\RoleModel;
 use App\Models\UserModel;
+use CodeIgniter\CLI\CLI;
 use CodeIgniter\Controller;
 
 class UsersController extends Controller
 {
     public function index()
     {
-        $model = new UserModel();
-        $data['users'] = $model->findAll();
-
+        $user_model = new UserModel();
+        $data['users'] = $user_model->where("role_id !=", "1")->findAll();
+        foreach ($data['users'] as $key => $user) {
+            $data['users'][$key]['user_role'] = $user_model->role($user['id']);
+        }
         return view('admin/users/users_list', $data);
     }
 
     public function create()
     {
-        return view('admin/users/create_user');
+        $model = new RoleModel();
+        $data['roles'] = $model->whereNotIn("key", ["super_admin"])->findAll();
+        return view('admin/users/create_user', ['roles' => $data['roles']]);
     }
 
     public function store()
     {
         $model = new UserModel();
-
+        $password = generateRandomPassword(14);
         $data = [
             'first_name' => $this->request->getPost('first_name'),
             'last_name' => $this->request->getPost('last_name'),
+            'mobile' => $this->request->getPost('user_mobile'),
+            'email' => $this->request->getPost('user_email'),
+            'password' => $password,
+            'role_id' => $this->request->getPost('role_id'),
         ];
-
         $model->save($data);
-
+        $this->sendCredentialsEmail($data, "Account Created", $password);
         return redirect()->to('admin/users');
     }
 
@@ -38,19 +47,21 @@ class UsersController extends Controller
     {
         $model = new UserModel();
         $data['user'] = $model->find($id);
-
+        $model = new RoleModel();
+        $data['roles'] = $model->whereNotIn("key", ["super_admin"])->findAll();
         return view('admin/users/edit_user', $data);
     }
 
     public function update($id)
     {
         $model = new UserModel();
-
         $data = [
             'first_name' => $this->request->getPost('first_name'),
             'last_name' => $this->request->getPost('last_name'),
+            'mobile' => $this->request->getPost('user_mobile'),
+            'email' => $this->request->getPost('user_email'),
+            'role_id' => $this->request->getPost('role_id'),
         ];
-
         $model->update($id, $data);
 
         return redirect()->to('admin/users');
@@ -67,5 +78,43 @@ class UsersController extends Controller
         $model->delete($id);
 
         return redirect()->to('admin/users');
+    }
+
+    private function sendCredentialsEmail($user, $email_title, $password)
+    {
+        // Load the user model to get the email address
+        $userModel = new UserModel();
+        if ($user) {
+            log_message("info", "inside if");
+            $email = \Config\Services::email();
+
+            $email->setTo($user['email']);
+            $email->setSubject($email_title);
+            $email->setMessage("Dear {$user['first_name']} {$user['last_name']},<br><br>
+Welcome to Task Management! 
+<br><br>
+We're excited to have you on board. Your account has been successfully created, and you can now access our services.
+<br><br>
+Here are your login details:
+<br><br>
+Email: {$user['email']}
+<br><br>
+Password: {$password}
+<br><br>
+If you have any questions or need assistance, please don't hesitate to reach out.
+<br><br>
+Best regards,
+<br><br>
+The Task Management Team");
+            log_message('info', 'before');
+            $session = session();
+            if ($email->send()) {
+                log_message('info', 'Email sent successfully to recipient@example.com');
+                $session->setFlashdata('success', "An Email with email and password sent to {$user['email']}.");
+            } else {
+                log_message('error', 'Failed to send email. Debug info: ' . $data);
+                $session->setFlashdata('error', "Failed to send email to {$user['email']}.");
+            }
+        }
     }
 }

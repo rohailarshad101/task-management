@@ -53,4 +53,23 @@ function addTaskComment($task_comment_id, $comment, $status = null)
     $taskStatusLogModel->save($data);
 }
 
+function generateRandomPassword($length = 12): string
+{
+    // Define the characters that will be used in the password.
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-_=+';
+    $charactersLength = strlen($characters);
+    $randomPassword = '';
+
+    // Generate a random password.
+    for ($i = 0; $i < $length; $i++) {
+        $randomIndex = random_int(0, $charactersLength - 1);
+        $randomPassword .= $characters[$randomIndex];
+    }
+    return $randomPassword;
+}
+
+function hash_password($password) {
+   return password_hash($password, PASSWORD_BCRYPT);
+}
+
 ?>

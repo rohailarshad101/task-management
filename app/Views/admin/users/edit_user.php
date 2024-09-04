@@ -27,6 +27,29 @@
                             <label for="name">Last Name</label>
                             <input type="text" class="form-control" id="last_name" name="last_name" value="<?= $user['last_name'] ?>" required>
                         </div>
+                        <div class="form-group">
+                            <label for="name">Email</label>
+                            <input type="email" class="form-control" id="user_email" name="user_email" value="<?= $user['email'] ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Mobile</label>
+                            <input type="text" class="form-control" id="user_mobile" name="user_mobile" value="<?= $user['mobile'] ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="category">Role</label>
+                            <select class="form-control" id="role_id" name="role_id" required>
+                                <option value="">Choose</option>
+                                <?php foreach ($roles as $role): ?>
+                                    <option value="<?= $role['id'] ?>" <?= $role['id'] == $user['role_id'] ? 'selected' : '' ?>><?= $role['name'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="is_active" name="is_active">
+                                <label class="form-check-label" for="flexSwitchCheckDefault">Active</label>
+                            </div>
+                        </div>
                         <button type="submit" class="btn btn-primary mr-2">Update</button>
                     </form>
                 </div>

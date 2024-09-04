@@ -31,19 +31,30 @@ $routes->group('', ['filter' => ['authfilter', 'cors']], static function ($route
                 $routes->post('upload-file', 'TaskController::uploadTaskFile');
                 $routes->post('delete-file', 'TaskController::deleteTaskFile');
             });
-            $routes->get('categories', 'CategoryController::index');
-            $routes->get('categories/create', 'CategoryController::create');
-            $routes->post('categories/store', 'CategoryController::store');
-            $routes->get('categories/edit/(:num)', 'CategoryController::edit/$1');
-            $routes->post('categories/update/(:num)', 'CategoryController::update/$1');
-            $routes->get('categories/delete/(:num)', 'CategoryController::delete/$1');
-
-            $routes->get('users', 'UsersController::index');
-            $routes->get('users/create', 'UsersController::create');
-            $routes->post('users/store', 'UsersController::store');
-            $routes->get('users/edit/(:num)', 'UsersController::edit/$1');
-            $routes->post('users/update/(:num)', 'UsersController::update/$1');
-            $routes->get('users/delete/(:num)', 'UsersController::delete/$1');
+            $routes->group('categories', static function ($routes) {
+                $routes->get('', 'CategoryController::index');
+                $routes->get('create', 'CategoryController::create');
+                $routes->post('store', 'CategoryController::store');
+                $routes->get('edit/(:num)', 'CategoryController::edit/$1');
+                $routes->post('update/(:num)', 'CategoryController::update/$1');
+                $routes->get('delete/(:num)', 'CategoryController::delete/$1');
+            });
+//            $routes->group('roles', static function ($routes) {
+//                $routes->get('', 'RoleController::index');
+//                $routes->get('create', 'RoleController::create');
+//                $routes->post('store', 'RoleController::store');
+//                $routes->get('edit/(:num)', 'RoleController::edit/$1');
+//                $routes->post('update/(:num)', 'RoleController::update/$1');
+//                $routes->get('delete/(:num)', 'RoleController::delete/$1');
+//            });
+            $routes->group('users', static function ($routes) {
+                $routes->get('', 'UsersController::index');
+                $routes->get('create', 'UsersController::create');
+                $routes->post('store', 'UsersController::store');
+                $routes->get('edit/(:num)', 'UsersController::edit/$1');
+                $routes->post('update/(:num)', 'UsersController::update/$1');
+                $routes->get('delete/(:num)', 'UsersController::delete/$1');
+            });
         });
     });
     $routes->group('', ['namespace' => "App\Controllers\User"], static function ($routes) {

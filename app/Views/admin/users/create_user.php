@@ -28,6 +28,30 @@
                             <label for="name">Last Name</label>
                             <input type="text" class="form-control" id="last_name" name="last_name" value="" required>
                         </div>
+                        <div class="form-group">
+                            <label for="name">Email</label>
+                            <input type="email" class="form-control" id="user_email" name="user_email" value="" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Mobile</label>
+                            <input type="text" class="form-control" id="user_mobile" name="user_mobile" value="" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="category">Role</label>
+                            <select class="form-control" id="role_id" name="role_id" required>
+                                <option value="">Choose</option>
+                                <?php foreach ($roles as $role): ?>
+                                    <option value="<?= $role['id'] ?>"><?= $role['name'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-switch">
+                                <span class="slider"></span>
+                                
+                            </label>
+                        </div>
                         <button type="submit" class="btn btn-primary mr-2">Create</button>
                     </form>
                 </div>
