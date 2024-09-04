@@ -3,6 +3,7 @@
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
+use CodeIgniter\Database\RawSql;
 
 class CreateNotificationsTable extends Migration
 {
@@ -16,9 +17,15 @@ class CreateNotificationsTable extends Migration
                 'auto_increment' => true,
             ],
             'user_id' => [
-                'type'       => 'INT',
-                'constraint' => 11,
-                'unsigned'   => false,
+                'type'           => 'INT',
+                'constraint'     => 11,
+                'unsigned'       => true,
+                'null'       => false,
+            ],
+            'title' => [
+                'type'       => 'VARCHAR',
+                'constraint' => '255',
+                'null'       => false,
             ],
             'message' => [
                 'type'       => 'TEXT',
@@ -27,20 +34,30 @@ class CreateNotificationsTable extends Migration
             'is_read' => [
                 'type'       => 'TINYINT',
                 'constraint' => 1,
-                'default'    => 0, // 0 = Unread, 1 = Read
+                'default'    => 0,
+                'null'       => false,
             ],
             'created_at' => [
-                'type'       => 'DATETIME',
-                'null'       => true,
+                'type'    => 'TIMESTAMP',
+                'default' => new RawSql('CURRENT_TIMESTAMP'),
             ],
             'updated_at' => [
-                'type'       => 'DATETIME',
+                'type'       => 'TIMESTAMP',
+                'default' => new RawSql('CURRENT_TIMESTAMP'),
+                'null'       => false,
+                'on_update'  => new RawSql('CURRENT_TIMESTAMP'),
+            ],
+            'deleted_at' => [
+                'type'       => 'TIMESTAMP',
                 'null'       => true,
             ],
         ]);
 
         $this->forge->addKey('id', true);
+        $this->forge->addKey('user_id');
+
         $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'CASCADE');
+
         $this->forge->createTable('notifications');
     }
 

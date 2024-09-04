@@ -18,7 +18,7 @@ class CreateTaskStatusLogTable extends Migration
             'task_comment_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => false,
+                'unsigned' => true,
             ],
             'status' => [
                 'type' => 'ENUM',
