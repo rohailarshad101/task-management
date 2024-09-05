@@ -36,6 +36,15 @@
                             <input type="text" class="form-control" id="user_mobile" name="user_mobile" value="<?= $user['mobile'] ?>" required>
                         </div>
                         <div class="form-group">
+                            <?php
+                            if(($user['is_active'])) {
+                                $checked = "checked";
+                                $value = "1";
+                            }else{
+                                $checked = "";
+                                $value = "0";
+                            }
+                            ?>
                             <label for="category">Role</label>
                             <select class="form-control" id="role_id" name="role_id" required>
                                 <option value="">Choose</option>
@@ -45,9 +54,9 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="is_active" name="is_active">
-                                <label class="form-check-label" for="flexSwitchCheckDefault">Active</label>
+                            <div class="form-check form-switch user_status_toggle">
+                                <input type="checkbox" class="form-check-input" id="user_active" name="user_active" data-id="<?= $user['id'] ?>" value="<?= $value ?>" <?= $checked?>>
+                                <label class="form-check-label" for="user_active">Active</label>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary mr-2">Update</button>
@@ -57,4 +66,19 @@
         </div>
     </div>
 </div>
+<script>
+    $(function () {
+        $(document).on('click', "#user_active", function () {
+            // 'this' refers to the checkbox that was clicked
+            let checkbox = $(this);
+
+            // Set the value based on the checked state
+            if (checkbox.prop('checked')) {
+                checkbox.val('1');  // Checked state, set value to 1
+            } else {
+                checkbox.val('0');  // Unchecked state, set value to 0
+            }
+        });
+    })
+</script>
 <?= $this->endSection() ?>

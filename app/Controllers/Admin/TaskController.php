@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\ApiResponse;
 use App\Models\CategoryModel;
+use App\Models\NotificationModel;
 use App\Models\TaskCommentAttachmentModel;
 use App\Models\TaskCommentModel;
 use App\Models\TaskFileModel;
@@ -83,11 +84,12 @@ class TaskController extends Controller
             $post = $this->request->getPost();
             $responsible_persons = $post['responsible_persons'];
             $task_files = explode(",", $post['task_files']);
+            $due_date = $this->request->getPost('due_date');
             $data = [
                 'title' => $this->request->getPost('title'),
                 'category_id' => $this->request->getPost('category_id'),
                 'start_date' => getDBFormattedDate($this->request->getPost('start_date')),
-                'due_date' => getDBFormattedDate($this->request->getPost('due_date')),
+                'due_date' => getDBFormattedDate($due_date),
                 'tags' => $this->request->getPost('tags'),
                 'priority' => $this->request->getPost('priority'),
                 'status' => $this->request->getPost('status'),
@@ -103,6 +105,8 @@ class TaskController extends Controller
                     "user_id" => $responsible_person,
                     "task_id" => $task_id
                 ]);
+                $message = "Task '{$data['title']}' has been reassigned to you and is due on {$due_date}.";
+                $this->insertNotitifcation($responsible_person, $message);
             }
 
             foreach ($task_files as $task_file) {
@@ -153,6 +157,7 @@ class TaskController extends Controller
             $task_model = new TaskModel();
             $post = $this->request->getPost();
             $responsible_persons = $post['responsible_persons'];
+            $task_files = explode(",", $post['task_files']);
             $data = [
                 'title' => $this->request->getPost('title'),
                 'category_id' => $this->request->getPost('category_id'),
@@ -176,6 +181,12 @@ class TaskController extends Controller
                     "task_id" => $task_id
                 ]);
             }
+
+            foreach ($task_files as $task_file) {
+                $taskFileModel = new TaskFileModel();
+                $taskFileModel->where('id', $task_file)->set(['task_id' => $task_id])->update();
+            }
+
             $this->db->transComplete();
         } catch (DatabaseException $e) {
             echo "<pre>";
@@ -361,5 +372,26 @@ class TaskController extends Controller
         }
 
         return redirect()->to('/task/view/'.$this->request->getPost('task_id'));
+    }
+
+    public function insertNotitifcation($user_id, $message) {
+        $notification_model = new NotificationModel();
+        $notification_model->insert([
+            'user_id' => $user_id,
+            'message' => $message,
+            'created_at' => date('Y-m-d H:i:s'),
+        ]);
+    }
+
+    public function getTaskRelatedFiles($task_id)
+    {
+        $task_file_model = new TaskFileModel();
+        $tasks_files = $task_file_model->where("task_id", $task_id)->findAll();
+        $response = \Config\Services::response();
+        if(!empty($tasks_files)) {
+            return ApiResponse::success('', $tasks_files,200, $response);
+        }else{
+            return ApiResponse::error('Task files not found', 400, $response);
+        }
     }
 }

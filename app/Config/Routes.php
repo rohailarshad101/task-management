@@ -25,6 +25,7 @@ $routes->group('', ['filter' => ['authfilter', 'cors']], static function ($route
                 $routes->post('detail', 'TaskController::getTaskDetails');
                 $routes->post('store', 'TaskController::store');
                 $routes->get('edit/(:num)', 'TaskController::edit/$1');
+                $routes->get('task-related-files/(:num)', 'TaskController::getTaskRelatedFiles/$1');
                 $routes->post('update/(:num)', 'TaskController::updateTask/$1');
                 $routes->post('update/comment/(:num)', 'TaskController::updateTaskComment/$1');
                 $routes->delete('(:num)', 'TaskController::delete/$1');
@@ -53,6 +54,7 @@ $routes->group('', ['filter' => ['authfilter', 'cors']], static function ($route
                 $routes->post('store', 'UsersController::store');
                 $routes->get('edit/(:num)', 'UsersController::edit/$1');
                 $routes->post('update/(:num)', 'UsersController::update/$1');
+                $routes->post('active-inactive', 'UsersController::activeInActive');
                 $routes->get('delete/(:num)', 'UsersController::delete/$1');
             });
         });
@@ -70,9 +72,9 @@ $routes->group('', ['filter' => ['authfilter', 'cors']], static function ($route
                 $routes->get('edit/(:num)', 'UserTaskController::edit/$1');
                 $routes->post('detail', 'UserTaskController::getTaskDetails');
             });
-            $routes->post('notifications/mark-as-read', 'NotificationController::markAsRead');
         });
     });
+    $routes->post('notifications/mark-as-read', 'NotificationController::markAllAsRead');
     $routes->get('download/(:any)', 'DownloadController::downloadFile/$1');
 //    $routes->get('/user/dashboard', 'UsersController::dashboard');
 });

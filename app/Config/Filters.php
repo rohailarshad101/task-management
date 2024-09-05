@@ -76,7 +76,19 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             'authfilter' => ['except' => ['login', 'logout']],
-            'csrf' => ['except' => ['admin/tasks/*', 'admin/task/*', 'user/notifications/*', 'user/tasks/*']],
+            'csrf' => [
+                'except' =>
+                    [
+                        'admin/*',
+//                        'admin/tasks/*',
+//                        'admin/task/*',
+//                        'admin/users/*',
+                        'user/*',
+//                        'user/notifications/*',
+//                        'user/tasks/*',
+                        'notifications/mark-as-read'
+                    ]
+            ],
         ],
         'after' => [
             // 'honeypot',
@@ -84,11 +96,10 @@ class Filters extends BaseFilters
             'cors' => [
                 'except' => [
                     'admin/*',
-                    'admin/task/*',
-                    'admin/tasks/*',
+//                    'admin/task/*',
+//                    'admin/tasks/*',
+//                    'admin/users/*',
                     'user/*',
-                    'user/notifications/*',
-                    'user/tasks/*',
                 ]
             ]
         ],

@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Admin;
 
+use App\Controllers\ApiResponse;
 use App\Models\RoleModel;
 use App\Models\UserModel;
 use CodeIgniter\CLI\CLI;
@@ -37,6 +38,7 @@ class UsersController extends Controller
             'email' => $this->request->getPost('user_email'),
             'password' => $password,
             'role_id' => $this->request->getPost('role_id'),
+            'is_active' => $this->request->getPost('user_active'),
         ];
         $model->save($data);
         $this->sendCredentialsEmail($data, "Account Created", $password);
@@ -61,6 +63,7 @@ class UsersController extends Controller
             'mobile' => $this->request->getPost('user_mobile'),
             'email' => $this->request->getPost('user_email'),
             'role_id' => $this->request->getPost('role_id'),
+            'is_active' => $this->request->getPost('user_active'),
         ];
         $model->update($id, $data);
 
@@ -91,30 +94,43 @@ class UsersController extends Controller
             $email->setTo($user['email']);
             $email->setSubject($email_title);
             $email->setMessage("Dear {$user['first_name']} {$user['last_name']},<br><br>
-Welcome to Task Management! 
-<br><br>
-We're excited to have you on board. Your account has been successfully created, and you can now access our services.
-<br><br>
-Here are your login details:
-<br><br>
-Email: {$user['email']}
-<br><br>
-Password: {$password}
-<br><br>
-If you have any questions or need assistance, please don't hesitate to reach out.
-<br><br>
-Best regards,
-<br><br>
-The Task Management Team");
+            Welcome to Task Management! 
+            <br><br>
+            We're excited to have you on board. Your account has been successfully created, and you can now access our services.
+            <br><br>
+            Here are your login details:
+            <br><br>
+            Email: {$user['email']}
+            <br><br>
+            Password: {$password}
+            <br><br>
+            If you have any questions or need assistance, please don't hesitate to reach out.
+            <br><br>
+            Best regards,
+            <br><br>
+            The Task Management Team");
             log_message('info', 'before');
             $session = session();
             if ($email->send()) {
                 log_message('info', 'Email sent successfully to recipient@example.com');
                 $session->setFlashdata('success', "An Email with email and password sent to {$user['email']}.");
             } else {
-                log_message('error', 'Failed to send email. Debug info: ' . $data);
+                log_message('error', 'Failed to send email. Debug info: ' . $user);
                 $session->setFlashdata('error', "Failed to send email to {$user['email']}.");
             }
         }
     }
+
+    public function activeInActive()
+    {
+        $user_model = new UserModel();
+        $data = [
+            'is_active' => $this->request->getPost('status'),
+        ];
+        $active_text = $this->request->getPost('user_active') == '1' ? 'activated' : 'deactivated';
+        $user_model->update($this->request->getPost('user_id'), $data);
+        $response = \Config\Services::response();
+        return ApiResponse::success("User has been successfully $active_text", [],200, $response);
+    }
+
 }

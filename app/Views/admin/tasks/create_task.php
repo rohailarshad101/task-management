@@ -130,6 +130,10 @@
                 showDownload:false,
                 statusBarWidth:600,
                 dragdropWidth:600,
+                on
+                Load:function () {
+                    console.log("i am here");
+                },
                 onSuccess:function(files,data,xhr,pd)
                 {
                     task_files.push(data.data.id)

@@ -15,7 +15,7 @@ class AuthController extends BaseController
             $user_email = $this->request->getPost('user_email');
             $password = $this->request->getPost('password');
             $userModel = new UserModel();
-            $user = $userModel->where('email', $user_email)->first(); // Fetch user by user_email
+            $user = $userModel->where('email', $user_email)->active()->first(); // Fetch user by user_email
 
             if ($user === null) {
                 // No user found with the provided user_email

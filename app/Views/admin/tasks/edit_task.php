@@ -1,6 +1,9 @@
 <?= $this->extend('layout/index') ?>
 
 <?= $this->section('content') ?>
+<?php
+$middle_url = session()->get('middle_url');
+?>
 <div class="content-wrapper">
     <div class="page-header">
         <h3 class="page-title">
@@ -87,12 +90,17 @@
                         </div>
                         <div class="form-group">
                             <label>File upload</label>
-                            <input type="file" id="task_files" name="task_files[]" class="file-upload-default">
-                            <div class="input-group col-xs-12">
-                                <input type="text" multiple class="form-control file-upload-info" placeholder="Upload file" disabled>
-                                <span class="input-group-append">
-                                  <button class="file-upload-browse btn btn-primary" type="button" onclick='$("#task_files").trigger("click")'>Upload</button>
-                                </span>
+                            <input type="hidden" id="task_files" name="task_files" class="file-upload-default" value="">
+                            <div class="col-xs-12 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Jquery file upload</h4>
+                                        <div class="file-upload-wrapper">
+                                            <div id="fileuploader">Upload</div>
+                                            <div id="existing_files"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -106,4 +114,105 @@
         </div>
     </div>
 </div>
+<script>
+    $(function()
+    {
+        'use strict';
+        // $('.file-upload-default').on('change', function() {
+        //     $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
+        // });
+        let task_files = [];
+        getTaskRelatedFiles(task_files, <?= $task['id'] ?>)
+
+        if ($("#fileuploader").length) {
+            $("#fileuploader").uploadFile({url: "/admin/tasks/upload-file",
+                dragDrop: true,
+                fileName: "taskFile",
+                returnType: "json",
+                showDelete: true,
+                showDownload:false,
+                statusBarWidth:600,
+                dragdropWidth:600,
+                onSuccess:function(files,data,xhr,pd)
+                {
+                    task_files.push(data.data.id)
+                    $("#task_files").val(task_files);
+                },
+                deleteCallback: function (response, pd) {
+                    if(response.status == 'success'){
+                        let file_id = response.data['id'];
+                        $.post("/admin/tasks/delete-file",
+                            {
+                                file_id: response.data['id']
+                            },
+                            function (resp, textStatus, jqXHR) {
+                                if(resp.status == 'success')
+                                {
+                                    task_files = jQuery.grep(task_files, function(value) {
+                                        return value != file_id;
+                                    })
+                                    $("#task_files").val(task_files);
+                                    $.toast({
+                                        heading: 'Danger',
+                                        text: resp.message,
+                                        showHideTransition: 'slide',
+                                        icon: 'warning',
+                                        loaderBg: '#f2a654',
+                                        position: 'top-right'
+                                    })
+                                }
+                            }
+                        );
+                    }
+                    // pd.statusbar.hide(); //You choice.
+                },
+            });
+
+            // Handle file deletion
+            $(document).on('click', '.delete_file', function() {
+                var fileId = $(this).data('id');
+                $.post("/admin/tasks/delete-file", { file_id: fileId }, function(resp) {
+                    if(resp.status === 'success') {
+                        task_files = jQuery.grep(task_files, function(value) {
+                            return value !== fileId;
+                        });
+                        $("#task_files").val(task_files);
+                        $(this).parent().remove(); // Remove file from display
+
+                        $.toast({
+                            heading: 'Danger',
+                            text: resp.message,
+                            showHideTransition: 'slide',
+                            icon: 'warning',
+                            loaderBg: '#f2a654',
+                            position: 'top-right'
+                        });
+                    }
+                }.bind(this));
+            });
+        }
+    });
+
+
+    function getTaskRelatedFiles(task_files, task_id) {
+        $.ajax({
+            url: '/<?= $middle_url; ?>/tasks/task-related-files/'+task_id,
+            type: 'GET',
+            success: function(response) {
+                var files = response.data;
+                task_files = files.map(file => file.id); // Update task_files with existing file IDs
+                // Display existing files
+                files.forEach(file => {
+                    $('#existing_files').append(`
+                        <div class="file-item">
+                            <a href="/download/${file.file_name}" class="download" target="_blank">${file.file_name}</a>
+                            <button class="btn btn-danger delete_file" data-id="${file.id}" type="button">Delete</button>
+                        </div>
+                    `);
+                });
+            }
+        });
+    }
+
+</script>
 <?= $this->endSection() ?>

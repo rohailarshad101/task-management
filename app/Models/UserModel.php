@@ -25,6 +25,11 @@ class UserModel extends Model
         return $data;
     }
 
+    public function active()
+    {
+        return $this->where('is_active', 1);
+    }
+
     public function role($user_id)
     {
         return $this->join("roles", 'users.role_id=roles.id', 'left')->where("users.id", $user_id)->first();
@@ -37,7 +42,7 @@ class UserModel extends Model
 
     public function getAllUsersWithoutAdmin()
     {
-        return $this->whereNotIn("role_id", [1,2])->findAll();
+        return $this->whereNotIn("role_id", [1])->findAll();
     }
 
     public function getAllUsers()

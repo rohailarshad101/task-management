@@ -96,8 +96,8 @@ class UserController extends Controller
         $user_model = new UserModel();
         $post = $this->request->getPost();
         $user_id = session()->get('user_id');
-
-
+        $session = \Config\Services::session();
+        $data = [];
         $user_profile_picture = $this->request->getFile('profile_picture');
         if ($user_profile_picture->isValid() && !$user_profile_picture->hasMoved()&& !$user_profile_picture->getSize() !== 0) {
             // Define a new filename to avoid conflicts
@@ -108,25 +108,22 @@ class UserController extends Controller
             $filePath = $this->customConfig->file_upload_path['tasks_file_path'];
             $user_profile_picture->move($filePath, $new_file_name);
             $user_profile_picture = $filePath.'/'.$new_file_name;
+            $data['profile_picture'] = $user_profile_picture;
+            $session->set(['profile_picture' => $user_profile_picture]);
         }
 
-        $data = [
-            'first_name' => $post['first_name'],
-            'last_name' => $post['last_name'],
-            'email' => $post['user_email'],
-            'mobile' => $post['user_mobile'],
-            'profile_picture' => $user_profile_picture,
-        ];
-
+        $data['first_name'] = $post['first_name'];
+        $data['last_name'] = $post['last_name'];
+        $data['email'] = $post['user_email'];
+        $data['mobile'] = $post['user_mobile'];
         $user_model->update($user_id, $data);
-        $session = \Config\Services::session();
+
 
         $session->set([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
-            'mobile' => $data['mobile'],
-            'profile_picture' => $user_profile_picture
+            'mobile' => $data['mobile']
         ]);
 
         return redirect()->to('user/profile');

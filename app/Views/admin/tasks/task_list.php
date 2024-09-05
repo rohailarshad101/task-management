@@ -152,7 +152,8 @@ $middle_url = session()->get('middle_url');
             <div class="modal-body">
                 <div class="email-wrapper wrapper">
                     <div class="message-body">
-                        <h5>Attachments</h5>
+                        <h5 id="attachment_heading">Attachments</h5>
+                        <h5 id="no_attachment_heading" style="display: none">No Attachments</h5>
                         <div class="attachments-sections" id="attachments">
                         </div>
                     </div>
@@ -207,7 +208,8 @@ $middle_url = session()->get('middle_url');
                         let task_attachments_html = '';
                         let fa_file_icon = 'fa-file';
                         task_attachments_html += '<ul>';
-                        response.data.tasks_related_files.forEach(file => {
+                        var tasks_related_files = response.data.tasks_related_files;
+                        tasks_related_files.forEach(file => {
                             switch (file.file_type) {
                                 case "image/jpeg":
                                     fa_file_icon = "fa-file-image";
@@ -223,7 +225,7 @@ $middle_url = session()->get('middle_url');
                             task_attachments_html += '<p class="file-name">'+file.file_name+'</p>';
                             task_attachments_html += '<div class="buttons">';
                             task_attachments_html += '<p class="file-size">'+file.file_size+'</p>';
-                            task_attachments_html += '<a href="/download/'+file.file_name+'" class="download">Download</a>';
+                            task_attachments_html += '<a href="/download/'+file.file_name+'" class="download" target="_blank">Download</a>';
                             task_attachments_html += '</div>';
                             task_attachments_html += '</div>';
                             task_attachments_html += '</li>';
@@ -251,6 +253,13 @@ $middle_url = session()->get('middle_url');
                             commentsHtml += '</div>';
                             commentsHtml += '</div>';
                         });
+                        if(tasks_related_files.length > 0) {
+                            $('#attachment_heading').show();
+                            $('#no_attachment_heading').hide();
+                        }else{
+                            $('#no_attachment_heading').show();
+                            $('#attachment_heading').hide();
+                        }
                         $('#attachments').html(task_attachments_html);
                         $('#comments').html(commentsHtml);
                         $("#task_id").val(task_id);

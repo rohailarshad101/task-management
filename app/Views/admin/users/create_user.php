@@ -46,11 +46,10 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="switch">
-                                <input type="checkbox" id="toggle-switch">
-                                <span class="slider"></span>
-                                
-                            </label>
+                            <div class="form-check form-switch user_status_toggle">
+                                <input class="form-check-input" type="checkbox" value="" id="user_active" name="user_active">
+                                <label class="form-check-label" for="user_active">Active</label>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary mr-2">Create</button>
                     </form>
@@ -59,5 +58,20 @@
         </div>
     </div>
 </div>
+<script>
+    $(function () {
+        $(document).on('click', "#user_active", function () {
+            // 'this' refers to the checkbox that was clicked
+            let checkbox = $(this);
+
+            // Set the value based on the checked state
+            if (checkbox.prop('checked')) {
+                checkbox.val('1');  // Checked state, set value to 1
+            } else {
+                checkbox.val('0');  // Unchecked state, set value to 0
+            }
+        });
+    })
+</script>
 
 <?= $this->endSection() ?>

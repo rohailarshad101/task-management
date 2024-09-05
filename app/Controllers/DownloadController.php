@@ -10,7 +10,7 @@ class DownloadController extends BaseController
     public function downloadFile($filename)
     {
         // Set the path to the writable/uploads/task_related_documents directory
-        $filePath = WRITEPATH . 'uploads/task_related_documents/' . $filename;
+        $filePath = FCPATH . 'uploads/task_related_documents/' . $filename;
 
         // Check if the file exists
         if (!file_exists($filePath)) {

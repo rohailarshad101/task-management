@@ -35,6 +35,7 @@
                                 <th>Email</th>
                                 <th>Mobile</th>
                                 <th>Role</th>
+                                <th>Active</th>
                                 <th class="text-center">Actions</th>
                             </tr>
                             </thead>
@@ -45,6 +46,21 @@
                                     <td><?= $user['email'] ?></td>
                                     <td><?= $user['mobile'] ?></td>
                                     <td><?= $user['user_role']['name'] ?></td>
+                                    <td>
+                                        <?php
+                                            if(($user['is_active'])) {
+                                                $checked = "checked";
+                                                $value = "1";
+                                            }else{
+                                                $checked = "";
+                                                $value = "0";
+                                            }
+                                        ?>
+                                        <div class="form-check form-switch user_status_toggle">
+                                            <input type="checkbox" class="form-check-input" id="user_active" name="user_active" data-id="<?= $user['id'] ?>" value="<?= $value ?>" <?= $checked?>>
+                                            <label class="form-check-label" for="user_active">Active</label>
+                                        </div>
+                                    </td>
                                     <td class="text-center">
                                         <a href="/admin/users/edit/<?= $user['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
                                         <a href="/admin/users/delete/<?= $user['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
@@ -59,4 +75,37 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(function ()
+    {
+        $(document).on('click', "#user_active", function () {
+            // 'this' refers to the checkbox that was clicked
+            let checkbox = $(this);
+
+            // Set the value based on the checked state
+            let isActive = checkbox.prop('checked') ? 1 : 0; // 1 for active, 0 for inactive
+            checkbox.val(isActive);
+
+            // Capture the user ID (assuming it's stored as a data attribute)
+            let userId = checkbox.attr('data-id');
+
+            // Make an API call to update the user's status
+            $.ajax({
+                url: '/admin/users/active-inactive',  // Update this to your actual API endpoint
+                method: 'POST',
+                data: {
+                    user_id: userId,
+                    status: isActive  // Send the new status (1 for active, 0 for inactive)
+                },
+                success: function(response) {
+                    console.log('User status updated successfully:', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating user status:', error);
+                }
+            });
+        });
+    });
+</script>
 <?= $this->endSection() ?>

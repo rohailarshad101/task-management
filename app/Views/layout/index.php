@@ -36,6 +36,7 @@ if(!is_null($notifications)){
     <!-- endinject -->
     <!-- inject:css -->
     <link rel="stylesheet" href="<?= base_url() ?>vendors/css/style.css">
+    <link rel="stylesheet" href="<?= base_url() ?>vendors/css/custom.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>vendors/images/favicon.png"/>
     <script src="<?= base_url() ?>vendors/js/jquery.min.js"></script>
@@ -57,7 +58,7 @@ if(!is_null($notifications)){
             <ul class="navbar-nav navbar-nav-right">
                 <?php if ($role_id !== 1 && ($role_id == 2 || $role_id == 3)) {?>
                 <li class="nav-item dropdown">
-                    <a class="nav-link count-indicator" id="notificationDropdown" href="javascript:void(0)" data-toggle="modal" data-target="#notificationModal" data-whatever="@mdo" data-backdrop="static" data-keyboard="false">
+                    <a class="nav-link count-indicator" id="notificationDropdown" href="javascript:void(0)" data-toggle="modal" <?php if(count($notifications) > 0){?> data-target="#notificationModal" <?php }?> data-whatever="@mdo" data-backdrop="static" data-keyboard="false">
                         <i class="fas fa-bell mx-0"></i>
                         <span class="count"><?= $notification_count ?></span>
                     </a>
@@ -182,7 +183,9 @@ if(!is_null($notifications)){
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success">Mark All as read</button>
+                <?php if(count($notifications) > 0){?>
+                <button type="button" class="btn btn-success" id="mark_as_read">Mark All as read</button>
+                <?php }?>
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -207,7 +210,7 @@ if(!is_null($notifications)){
 
 <!-- endinject -->
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(function () {
         // Show loader before AJAX request starts
         $(document).ajaxStart(function() {
             $('#content').show();
@@ -241,27 +244,36 @@ if(!is_null($notifications)){
             });
         }
 
-        $('.mark-as-read').on('click', function() {
+        $(document).on('click', "#mark_as_read", function () {
             // Get the notification ID from the parent element
-            var notificationId = $(this).closest('.notification').data('id');
+            let notificationId = $(this).closest('.notification').data('id');
 
             // AJAX request to mark the notification as read
             $.ajax({
-                url: '/user/notifications/mark-as-read',
+                url: '/notifications/mark-as-read',
                 type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    notification_ids: [notificationId]
-                }),
                 success: function(response) {
-                    alert(response.message);
-
-                    // Optionally, you can remove or hide the notification
-                    $(this).closest('.notification').remove();
+                    $.toast({
+                        heading: 'Success',
+                        text: response.message,
+                        showHideTransition: 'slide',
+                        icon: 'success',
+                        loaderBg: '#04B76B',
+                        position: 'top-right'
+                    });
+                    setTimeout(function () {
+                        location.reload();
+                    },1500)
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error:', error);
-                    alert('Failed to mark notification as read.');
+                    $.toast({
+                        heading: 'Danger',
+                        text: error.message,
+                        showHideTransition: 'slide',
+                        icon: 'warning',
+                        loaderBg: '#f2a654',
+                        position: 'top-right'
+                    });
                 }
             });
         });

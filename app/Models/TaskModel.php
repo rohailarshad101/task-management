@@ -70,6 +70,7 @@ class TaskModel extends Model
         $task_users = $this->select('tasks_files.*')
             ->join('tasks_files', 'tasks_files.task_id = tasks.id', 'inner')
             ->where("tasks_files.task_id", $task_id)
+            ->where("tasks_files.deleted_at", NULL)
             ->findAll();
         return $task_users;
     }
