@@ -52,6 +52,12 @@ class CreateUsersTable extends Migration
                 'unsigned'   => true,
                 'null'       => true,
             ],
+            'dept_id' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+                'null'       => true,
+            ],
             'profile_picture' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '255',
@@ -82,8 +88,10 @@ class CreateUsersTable extends Migration
         $this->forge->addUniqueKey('username');
         $this->forge->addUniqueKey('email');
         $this->forge->addKey('role_id');
-
         $this->forge->addForeignKey('role_id', 'roles', 'id', 'CASCADE', 'SET NULL');
+
+        $this->forge->addKey('dept_id');
+        $this->forge->addForeignKey('dept_id', 'departments', 'id', 'CASCADE', 'SET NULL');
 
         $this->forge->createTable('users');
     }

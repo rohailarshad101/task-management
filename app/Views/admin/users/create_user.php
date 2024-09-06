@@ -46,6 +46,15 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <label for="category">Departments</label>
+                            <select class="form-control" id="dept_id" name="dept_id" required>
+                                <option value="">Choose</option>
+                                <?php foreach ($departments as $department): ?>
+                                    <option value="<?= $department['id'] ?>"><?= $department['name'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <div class="form-check form-switch user_status_toggle">
                                 <input class="form-check-input" type="checkbox" value="" id="user_active" name="user_active">
                                 <label class="form-check-label" for="user_active">Active</label>

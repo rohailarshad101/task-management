@@ -29437,3 +29437,20 @@ input:checked + .slider {
 input:checked + .slider:before {
     transform: translateX(26px);
 }
+
+.loader-backdrop.show {
+    opacity: 0.8; /* Adjust opacity to your preference */
+}
+
+.loader-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050; /* Higher z-index to overlay other content */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\ApiResponse;
+use App\Models\DepartmentModel;
 use App\Models\RoleModel;
 use App\Models\UserModel;
 use CodeIgniter\CLI\CLI;
@@ -16,15 +17,18 @@ class UsersController extends Controller
         $data['users'] = $user_model->where("role_id !=", "1")->findAll();
         foreach ($data['users'] as $key => $user) {
             $data['users'][$key]['user_role'] = $user_model->role($user['id']);
+            $data['users'][$key]['user_dept'] = $user_model->department($user['id']);
         }
         return view('admin/users/users_list', $data);
     }
 
     public function create()
     {
-        $model = new RoleModel();
-        $data['roles'] = $model->whereNotIn("key", ["super_admin"])->findAll();
-        return view('admin/users/create_user', ['roles' => $data['roles']]);
+        $role_model = new RoleModel();
+        $data['roles'] = $role_model->whereNotIn("key", ["super_admin"])->findAll();
+        $dept_model = new DepartmentModel();
+        $data['departments'] = $dept_model->where("deleted_at =", null)->findAll();
+        return view('admin/users/create_user', $data);
     }
 
     public function store()
@@ -38,6 +42,7 @@ class UsersController extends Controller
             'email' => $this->request->getPost('user_email'),
             'password' => $password,
             'role_id' => $this->request->getPost('role_id'),
+            'dept_id' => $this->request->getPost('dept_id'),
             'is_active' => $this->request->getPost('user_active'),
         ];
         $model->save($data);
@@ -49,8 +54,10 @@ class UsersController extends Controller
     {
         $model = new UserModel();
         $data['user'] = $model->find($id);
-        $model = new RoleModel();
-        $data['roles'] = $model->whereNotIn("key", ["super_admin"])->findAll();
+        $role_model = new RoleModel();
+        $data['roles'] = $role_model->whereNotIn("key", ["super_admin"])->findAll();
+        $dept_model = new DepartmentModel();
+        $data['departments'] = $dept_model->where("deleted_at =", null)->findAll();
         return view('admin/users/edit_user', $data);
     }
 
@@ -63,6 +70,7 @@ class UsersController extends Controller
             'mobile' => $this->request->getPost('user_mobile'),
             'email' => $this->request->getPost('user_email'),
             'role_id' => $this->request->getPost('role_id'),
+            'dept_id' => $this->request->getPost('dept_id'),
             'is_active' => $this->request->getPost('user_active'),
         ];
         $model->update($id, $data);

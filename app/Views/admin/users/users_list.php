@@ -35,6 +35,7 @@
                                 <th>Email</th>
                                 <th>Mobile</th>
                                 <th>Role</th>
+                                <th>Department</th>
                                 <th>Active</th>
                                 <th class="text-center">Actions</th>
                             </tr>
@@ -46,6 +47,7 @@
                                     <td><?= $user['email'] ?></td>
                                     <td><?= $user['mobile'] ?></td>
                                     <td><?= $user['user_role']['name'] ?></td>
+                                    <td><?= $user['user_dept']['name'] ?></td>
                                     <td>
                                         <?php
                                             if(($user['is_active'])) {

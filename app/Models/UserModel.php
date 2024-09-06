@@ -8,7 +8,7 @@ class UserModel extends Model
 {
     protected $table = 'users';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['first_name', 'last_name', 'email', 'mobile', 'password', 'profile_picture', 'role_id', 'is_active'];
+    protected $allowedFields = ['first_name', 'last_name', 'email', 'mobile', 'password', 'profile_picture', 'dept_id', 'role_id', 'is_active'];
 
     protected $beforeInsert = ['hashPassword'];
 
@@ -48,5 +48,10 @@ class UserModel extends Model
     public function getAllUsers()
     {
         return $this->findAll();
+    }
+
+    public function department($user_id)
+    {
+        return $this->join("departments", 'users.dept_id=departments.id', 'left')->where("users.id", $user_id)->first();
     }
 }

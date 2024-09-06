@@ -3,7 +3,6 @@
 <?= $this->section('content') ?>
 <?php
 $middle_url = session()->get('middle_url');
-
 ?>
 <div class="content-wrapper">
     <div class="page-header">
@@ -123,11 +122,11 @@ $middle_url = session()->get('middle_url');
                                         <?php }else{ ?>
                                             <a href="javascript:void(0)" class="btn btn-secondary btn-sm" disabled="">Edit</a>
                                         <?php } ?>
-                    <!--                    <a href="/tasks/delete/--><?php //= $task['id'] ?><!--" class="btn btn-danger btn-sm">Delete</a>-->
-                                        <a href="javascript:void(0)" onclick="showSwal(<?= $task['task_id']; ?>)" class="btn btn-danger delete-btn" data-id="<?= $task['task_id']; ?>">Delete</a>
-                                        <a href="javascript:void(0)" class="btn btn-info delete-btn updateTaskBtn" data-id="<?= $task['task_id']; ?>">
-                                            <i class="fa fa-eye text-light-primary"></i> &nbsp;View
+                                        <a href="javascript:void(0)" class="btn btn-info updateTaskBtn" data-id="<?= $task['task_id']; ?>">
+                                            <i class="fa fa-eye text-light-primary"></i>
+                                            &nbsp;View
                                         </a>
+                                        <a href="javascript:void(0)" class="btn btn-danger deleteTaskBtn" data-id="<?= $task['task_id']; ?>">Delete</a>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -161,7 +160,7 @@ $middle_url = session()->get('middle_url');
                 <form action="/<?= $middle_url; ?>/tasks/update/" method="post" id="task_update_form" class="forms-sample" enctype="multipart/form-data">
                     <input type="hidden" id="task_id" name="task_id" value="">
                     <div class="form-group">
-                        <label for="status">Status</label>
+                        <label for="taskStatus">Status</label>
                         <select class="form-control" id="taskStatus" name="taskStatus" value="" required>
                             <?php foreach ($task_statuses_array as $key => $val): ?>
                                 <option value="<?= $key ?>"><?= $val ?></option>
@@ -169,11 +168,11 @@ $middle_url = session()->get('middle_url');
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="formFileMultiple" class="col-form-label">File:</label>
+                        <label for="task_update_files" class="col-form-label">File:</label>
                         <input class="form-control" type="file" id="task_update_files" name="task_update_files" multiple>
                     </div>
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Message:</label>
+                        <label for="task_comment" class="col-form-label">Message:</label>
                         <textarea class="form-control" id="task_comment" name="task_comment" value=""></textarea>
                     </div>
                     <div class="modal-footer">
@@ -262,6 +261,8 @@ $middle_url = session()->get('middle_url');
                         }
                         $('#attachments').html(task_attachments_html);
                         $('#comments').html(commentsHtml);
+                        $("#ModalLabel").text($("#task_title_"+task_id).val());
+                        $("#taskStatus").val($("#task_status_"+task_id).val());
                         $("#task_id").val(task_id);
                         $('#update_task_modal').modal('show');
                     }
@@ -312,7 +313,9 @@ $middle_url = session()->get('middle_url');
             });
         });
 
-        showSwal = function(id) {
+        $(".deleteTaskBtn").on("click", function (e)
+        {
+            const task_id = $(this).attr("data-id");
             swal({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -337,7 +340,7 @@ $middle_url = session()->get('middle_url');
             }).then(function(isConfirm) {
                 if (isConfirm) {
                     $.ajax({
-                        url: '/<?= $middle_url; ?>/tasks/' + id,
+                        url: '/<?= $middle_url; ?>/tasks/' + task_id,
                         type: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'), // Include CSRF token if necessary
@@ -370,8 +373,69 @@ $middle_url = session()->get('middle_url');
                     });
                 }
             });
-        }
+            // deleteTask($(this).attr("data-id"));
+        });
     });
+
+    function deleteTask(id) {
+        swal({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            closeOnEsc: false,
+            buttons: {
+                cancel: {
+                    text: "Cancel",
+                    value: false,
+                    visible: true,
+                    className: "",
+                    closeModal: true,
+                },
+                confirm: {
+                    text: "OK",
+                    value: true,
+                    visible: true,
+                    className: "",
+                    closeModal: true
+                }
+            }
+        }).then(function(isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: '/<?= $middle_url; ?>/tasks/' + id,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'), // Include CSRF token if necessary
+                        'Authorization': 'Bearer <your_token>' // Include authorization token if necessary
+                    },
+                    success: function(response) {
+                        var message = response.success ? response.success : response.error;
+                        $.toast({
+                            heading: 'Success',
+                            text: message,
+                            showHideTransition: 'slide',
+                            icon: 'success',
+                            loaderBg: '#f96868',
+                            position: 'top-right'
+                        })
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000); // Adjust the delay as needed
+                    },
+                    error: function(xhr, status, error) {
+                        $.toast({
+                            heading: 'Danger',
+                            text: message,
+                            showHideTransition: 'slide',
+                            icon: 'error',
+                            loaderBg: '#f2a654',
+                            position: 'top-right'
+                        })
+                    }
+                });
+            }
+        });
+    }
 
     function calculateTimeDiff(created_at) {
         // Convert the datetime string to a Date object

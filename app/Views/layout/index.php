@@ -127,6 +127,12 @@ if(!is_null($notifications)){
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/admin/departments">
+                        <i class="fa fa-cubes menu-icon"></i>
+                        <span class="menu-title">Departments</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/admin/users">
                         <i class="fa fa-users menu-icon"></i>
                         <span class="menu-title">Users</span>
@@ -149,8 +155,6 @@ if(!is_null($notifications)){
     </div>
     <!-- page-body-wrapper ends -->
 </div>
-<div id="content" class="swal-overlay swal-overlay--show-modal" style="opacity: 0.3;">
-    <!-- Content will be updated here -->
 </div>
 <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -168,7 +172,8 @@ if(!is_null($notifications)){
                                 <i class="far fa-envelope mx-0"></i>
                             </div>
                         </div>
-                        <div class="preview-item-content flex-grow">
+                        <div class="preview-item-
+                         flex-grow">
                             <h6 class="preview-subject ellipsis font-weight-medium" data-id="<?= $notification['id'] ?>"><?= $notification['title'] ?>
                                 <span class="float-right font-weight-light small-text"><?= $notification['time_difference'] ?></span>
                             </h6>
@@ -195,6 +200,7 @@ if(!is_null($notifications)){
 <div id="loader" style="display: none;">
     <div class="pixel-loader"></div>
 </div>
+<div class="loader-backdrop fade show" id="loader_div"  style="display: none;"></div>
 <!-- container-scroller -->
 <!-- plugins:js -->
 <script src="<?= base_url() ?>vendors/js/vendor.bundle.base.js"></script>
@@ -206,6 +212,7 @@ if(!is_null($notifications)){
 <script src="<?= base_url() ?>vendors/js/data-table.js"></script>
 <script src="<?= base_url() ?>vendors/js/select2.js"></script>
 <script src="<?= base_url() ?>vendors/js/tooltips.js"></script>
+<!--<script src="--><?php //= base_url() ?><!--vendors/js/alerts.js"></script>-->
 <!--<script src="--><?php //= base_url() ?><!--vendors/js/file-upload.js"></script>-->
 
 <!-- endinject -->
@@ -213,14 +220,16 @@ if(!is_null($notifications)){
     $(function () {
         // Show loader before AJAX request starts
         $(document).ajaxStart(function() {
-            $('#content').show();
+            $('#loader_div').show();
             $('#loader').show();
         });
 
         // Hide loader after AJAX request completes
         $(document).ajaxStop(function() {
-            $('#content').hide();
-            $('#loader').hide();
+            setTimeout(function () {
+                $('#loader_div').hide();
+                $('#loader').hide();
+            }, 200)
         });
 
         if ($(".datepicker").length) {
@@ -283,6 +292,4 @@ if(!is_null($notifications)){
 <!-- End custom js for this page-->
 </body>
 
-
-<!-- Mirrored from www.urbanui.com/melody/template/pages/forms/basic_elements.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 15 Sep 2018 06:07:34 GMT -->
 </html>
