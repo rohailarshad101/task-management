@@ -161,7 +161,7 @@ $middle_url = session()->get('middle_url');
                     <input type="hidden" id="task_id" name="task_id" value="">
                     <div class="form-group">
                         <label for="taskStatus">Status</label>
-                        <select class="form-control" id="taskStatus" name="taskStatus" value="" required>
+                        <select class="form-control" id="task_status" name="task_status" value="" required>
                             <?php foreach ($task_statuses_array as $key => $val): ?>
                                 <option value="<?= $key ?>"><?= $val ?></option>
                             <?php endforeach; ?>
@@ -203,7 +203,7 @@ $middle_url = session()->get('middle_url');
                         $('#task-title').text(response.data.task.title);
                         $('#task-description').text(response.data.task.description);
 
-
+                        let task = response.data.task;
                         let task_attachments_html = '';
                         let fa_file_icon = 'fa-file';
                         task_attachments_html += '<ul>';
@@ -230,9 +230,14 @@ $middle_url = session()->get('middle_url');
                             task_attachments_html += '</li>';
                         });
                         task_attachments_html +='</ul>';
+
                         // Handle comments
                         let commentsHtml = '';
                         response.data.comments.forEach(commentRow => {
+                            let task_comment = commentRow.comment;
+                            if(commentRow.comment === ''){
+                                task_comment = commentRow.comment_related_logs.comment;
+                            }
                             let task_comment_attachments = commentRow.task_comment_attachments;
                             let comment_user = commentRow.comment_user;
                             console.log(comment_user.profile_picture);
@@ -242,7 +247,7 @@ $middle_url = session()->get('middle_url');
                             commentsHtml += '<img src="<?= base_url() ?>'+comment_user.profile_picture+'" alt="profile" class="img-sm rounded-circle"/>';
                             commentsHtml += '<div class="ml-4">';
                             commentsHtml += '<h6>'+user_full_name+'<small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>'+time_diff+'</small></h6>';
-                            commentsHtml += '<p>'+commentRow.comment+'</p>';
+                            commentsHtml += '<p>'+task_comment+'</p>';
                             $.each(task_comment_attachments, function(index, attachment) {
                                 // Simplify the file path
                                 attachment.file_path = attachment.file_path.replace(/\\\\/g, '\\');
@@ -262,7 +267,7 @@ $middle_url = session()->get('middle_url');
                         $('#attachments').html(task_attachments_html);
                         $('#comments').html(commentsHtml);
                         $("#ModalLabel").text($("#task_title_"+task_id).val());
-                        $("#taskStatus").val($("#task_status_"+task_id).val());
+                        $("#task_status").val(task.status);
                         $("#task_id").val(task_id);
                         $('#update_task_modal').modal('show');
                     }

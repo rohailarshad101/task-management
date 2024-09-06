@@ -7,6 +7,7 @@ use App\Models\CategoryModel;
 use App\Models\TaskCommentAttachmentModel;
 use App\Models\TaskCommentModel;
 use App\Models\TaskModel;
+use App\Models\TaskStatusLog;
 use App\Models\UserModel;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -88,6 +89,7 @@ class UserTaskController extends Controller
 
             $commentModel = new TaskCommentModel();
 
+            $taskStatusModal = new TaskStatusLog();
             // Fetch task details
             $task = $taskModel->find($task_id);
             // Fetch comments related to the task
@@ -100,6 +102,8 @@ class UserTaskController extends Controller
             foreach ($comments as $index => $comment) {
                 $comments[$index]['task_comment_attachments'] = $task_comment_attachment->where('task_comment_id', $comment['id'])->findAll();
                 $comments[$index]['comment_user'] = $user_model->where('id', $comment['user_id'])->find()[0];
+                $comment_related_logs = $taskStatusModal->where('task_comment_id', $comment['id'])->find();
+                $comments[$index]['comment_related_logs'] = $comment_related_logs ? $comment_related_logs[0] : [];
             }
 
             // Prepare response data
@@ -164,6 +168,7 @@ class UserTaskController extends Controller
             }
             addTaskComment($task_comment_id, $task_status_log, $post['task_status']);
 
+            $task_model->where("id", $post['task_id'])->set(["status" => $post['task_status']])->update();
             // Complete the transaction
             $db->transComplete();
             // Check the transaction status

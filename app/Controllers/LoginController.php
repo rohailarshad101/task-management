@@ -9,7 +9,7 @@ class LoginController extends BaseController
 {
     public function index()
     {
-//        dd(password_verify("Aa(q^0d4#W5kEy", '$2y$10$aUdRjllyeZ9.exi06epDAeyvjJTnOQz17OodxLS0Uz0wj5v88cmFW'));
+//        dd(password_verify("test123", '$2y$10$HtFwpSbgzfdbKZKbe7ZmSOZ7Ye5MnPJbgyifmrPftbfEVCudSklvO'));
 //        return password_hash("test123", PASSWORD_BCRYPT);
         return view('login');
     }

@@ -12,7 +12,7 @@ class TaskCommentModel extends Model
 
     public function getCommentsByTask($taskId)
     {
-        return $this->where('task_id', $taskId)->orderBy('created_at', 'ASC')->findAll();
+        return $this->where('task_id', $taskId)->orderBy('created_at', 'DESC')->findAll();
     }
 
     public function getCommentRelatedUser($taskId)
