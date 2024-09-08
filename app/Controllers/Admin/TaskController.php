@@ -367,6 +367,7 @@ class TaskController extends Controller
                 $comments[$index]['comment_user'] = $user_model->where('id', $comment['user_id'])->find()[0];
                 $comment_related_logs = $taskStatusModal->where('task_comment_id', $comment['id'])->find();
                 $comments[$index]['comment_related_logs'] = $comment_related_logs ? $comment_related_logs[0] : [];
+                $comments[$index]['comment_time_diff'] = calculateTimeDiff($comment['created_at']);
             }
             // Prepare response data
             $data = [

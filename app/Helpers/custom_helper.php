@@ -72,4 +72,33 @@ function hash_password($password) {
    return password_hash($password, PASSWORD_BCRYPT);
 }
 
+function calculateTimeDiff($created_at) {
+    // Convert the given datetime string to a DateTime object
+    $givenDate = new DateTime($created_at);
+
+    // Get the current date and time
+    $currentDate = new DateTime();
+
+    // Calculate the difference between the two DateTime objects
+    $interval = $currentDate->diff($givenDate);
+
+    // Extract days, hours, minutes, and seconds from the interval
+    $daysDifference = $interval->days;
+    $hoursDifference = $interval->h;
+    $minutesDifference = $interval->i;
+    $secondsDifference = $interval->s;
+
+    // Determine the most appropriate time unit to return
+    if ($daysDifference > 0) {
+        return $daysDifference . ' day(s) ago';
+    } elseif ($hoursDifference > 0) {
+        return $hoursDifference . ' hour(s) ago';
+    } elseif ($minutesDifference > 0) {
+        return $minutesDifference . ' minute(s) ago';
+    } else {
+        return $secondsDifference . ' second(s) ago';
+    }
+}
+
+
 ?>

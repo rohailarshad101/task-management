@@ -240,13 +240,11 @@ $middle_url = session()->get('middle_url');
                             }
                             let task_comment_attachments = commentRow.task_comment_attachments;
                             let comment_user = commentRow.comment_user;
-                            console.log(comment_user.profile_picture);
                             let user_full_name = comment_user.first_name+' ' +comment_user.last_name;
-                            let time_diff = calculateTimeDiff(commentRow.created_at);
                             commentsHtml += '<div class="d-flex align-items-start profile-feed-item">';
                             commentsHtml += '<img src="<?= base_url() ?>'+comment_user.profile_picture+'" alt="profile" class="img-sm rounded-circle"/>';
                             commentsHtml += '<div class="ml-4">';
-                            commentsHtml += '<h6>'+user_full_name+'<small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>'+time_diff+'</small></h6>';
+                            commentsHtml += '<h6>'+user_full_name+'<small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>'+commentRow.comment_time_diff+'</small></h6>';
                             commentsHtml += '<p>'+task_comment+'</p>';
                             $.each(task_comment_attachments, function(index, attachment) {
                                 // Simplify the file path
@@ -442,33 +440,33 @@ $middle_url = session()->get('middle_url');
         });
     }
 
-    function calculateTimeDiff(created_at) {
-        // Convert the datetime string to a Date object
-        let givenDate = new Date(created_at);
-
-        // Get the current date and time
-        let currentDate = new Date();
-
-        // Calculate the difference in milliseconds
-        let timeDifference = currentDate - givenDate;
-
-        // Calculate the difference in days, hours, minutes, and seconds
-        let daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        let hoursDifference = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        let minutesDifference = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-        let secondsDifference = Math.floor((timeDifference % (1000 * 60)) / 1000);
-
-        // Determine the most appropriate time unit to return
-        if (daysDifference > 0) {
-            return `${daysDifference} day(s) ago`;
-        } else if (hoursDifference > 0) {
-            return `${hoursDifference} hour(s) ago`;
-        } else if (minutesDifference > 0) {
-            return `${minutesDifference} minute(s) ago`;
-        } else {
-            return `${secondsDifference} second(s) ago`;
-        }
-    }
+    // function calculateTimeDiff(created_at) {
+    //     // Convert the datetime string to a Date object
+    //     let givenDate = new Date(created_at);
+    //
+    //     // Get the current date and time
+    //     let currentDate = new Date();
+    //
+    //     // Calculate the difference in milliseconds
+    //     let timeDifference = currentDate - givenDate;
+    //
+    //     // Calculate the difference in days, hours, minutes, and seconds
+    //     let daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    //     let hoursDifference = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    //     let minutesDifference = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    //     let secondsDifference = Math.floor((timeDifference % (1000 * 60)) / 1000);
+    //
+    //     // Determine the most appropriate time unit to return
+    //     if (daysDifference > 0) {
+    //         return `${daysDifference} day(s) ago`;
+    //     } else if (hoursDifference > 0) {
+    //         return `${hoursDifference} hour(s) ago`;
+    //     } else if (minutesDifference > 0) {
+    //         return `${minutesDifference} minute(s) ago`;
+    //     } else {
+    //         return `${secondsDifference} second(s) ago`;
+    //     }
+    // }
 
     function getTaskLatestComment(task_id) {
         $.ajax({
@@ -484,11 +482,10 @@ $middle_url = session()->get('middle_url');
                         let task_comment_attachments = commentRow.task_comment_attachments;
                         let comment_user = commentRow.comment_user;
                         let user_full_name = comment_user.first_name+' ' +comment_user.last_name;
-                        let time_diff = calculateTimeDiff(commentRow.created_at);
                         commentsHtml += '<div class="d-flex align-items-start profile-feed-item">';
                         commentsHtml += '<img src="<?= base_url() ?>vendors/images/faces/face19.html" alt="profile" class="img-sm rounded-circle"/>';
                         commentsHtml += '<div class="ml-4">';
-                        commentsHtml += '<h6>'+user_full_name+'<small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>'+time_diff+'</small></h6>';
+                        commentsHtml += '<h6>'+user_full_name+'<small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>'+commentRow.comment_time_diff+'</small></h6>';
                         commentsHtml += '<p>'+commentRow.comment+'</p>';
                         $.each(task_comment_attachments, function(index, attachment) {
                             // Simplify the file path
