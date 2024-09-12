@@ -47,6 +47,8 @@ class AuthController extends BaseController
                     'logged_in' => true,
                     'notifications' => $notifications
                 ]);
+                // Set notifications in session
+                session()->setFlashdata('notifications', $notifications);
                 if((int)$user['role_id'] === 1){
                     $redirect = "/admin/dashboard";
                 }else{

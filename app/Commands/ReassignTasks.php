@@ -3,6 +3,8 @@
 namespace App\Commands;
 
 use App\Libraries\Notification;
+use App\Models\TaskFileModel;
+use App\Models\TaskUserModel;
 use App\Models\UserModel;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
@@ -31,7 +33,7 @@ class ReassignTasks extends BaseCommand
                 if($this->shouldReassign($nextDate)) {
                     $taskModel->update($task['id'], [
                         'due_date' => $nextDate,
-                        'status' => "Active"
+                        'status' => "Pending"
                     ]);
 
                     // Send notification
@@ -75,6 +77,45 @@ class ReassignTasks extends BaseCommand
     {
         $currentDate = new DateTime();
         return $currentDate >= new DateTime($nextDate);
+    }
+
+    public function createNewTask($post)
+    {
+        $this->db->transException(true)->transStart();
+        $task_model = new TaskModel();
+        $responsible_persons = $post['responsible_persons'];
+        $task_files = explode(",", $post['task_files']);
+        $due_date = $this->request->getPost('due_date');
+        $data = [
+            'title' => $this->request->getPost('title'),
+            'category_id' => $this->request->getPost('category_id'),
+            'start_date' => getDBFormattedDate($this->request->getPost('start_date')),
+            'due_date' => getDBFormattedDate($due_date),
+            'tags' => $this->request->getPost('tags'),
+            'priority' => $this->request->getPost('priority'),
+            'status' => $this->request->getPost('status'),
+            'repetition_frequency' => $this->request->getPost('repetition_frequency'),
+            'description' => $this->request->getPost('description')
+        ];
+
+        $task_model->insert($data);
+        $task_id = $task_model->getInsertID();
+        foreach ($responsible_persons as $responsible_person) {
+            $task_user = new TaskUserModel;
+            $task_user->insert([
+                "user_id" => $responsible_person,
+                "task_id" => $task_id
+            ]);
+            $message = "Task '{$data['title']}' has been reassigned to you and is due on {$due_date}.";
+            $this->insertNotitifcation($responsible_person, $message);
+        }
+
+        foreach ($task_files as $task_file) {
+            $taskFileModel = new TaskFileModel();
+            $taskFileModel->where('id', $task_file)->set(['task_id' => $task_id])->update();
+        }
+
+        $this->db->transComplete();
     }
 
     private function sendEmail($userId, $taskTitle, $dueDate)

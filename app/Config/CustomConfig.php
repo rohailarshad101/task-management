@@ -13,6 +13,7 @@ class CustomConfig extends BaseConfig
 
     public array $task_statuses_array = [
         "Active" => "Active",
+        "Pending" => "Pending",
         "In Progress" => "In Progress",
         "On Hold" => "On Hold",
         "Completed" => "Completed",
@@ -21,6 +22,7 @@ class CustomConfig extends BaseConfig
     ];
 
     public array $task_statuses_array_for_user = [
+        "Pending" => "Pending",
         "In Progress" => "In Progress",
         "On Hold" => "On Hold",
         "Completed" => "Completed",

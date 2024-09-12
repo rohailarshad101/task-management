@@ -111,6 +111,10 @@ $middle_url = session()->get('middle_url');
                                                 $status = "badge-warning";
                                                 break;
 
+                                            case "Pending":
+                                                $status = "badge-light";
+                                                break;
+
                                         }
                                         ?>
                                         <label class="badge <?= $status ?> badge-pill"><?= $task['status'] ?></label>

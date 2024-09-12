@@ -97,6 +97,10 @@
                                             $status = "badge-warning";
                                             break;
 
+                                        case "Pending":
+                                            $status = "badge-light";
+                                            break;
+
                                     }
                                     ?>
                                     <label class="badge <?= $status ?> badge-pill"><?= $task['status'] ?></label></td>

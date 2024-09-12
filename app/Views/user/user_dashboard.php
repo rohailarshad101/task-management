@@ -113,6 +113,7 @@ $middle_url = session()->get('middle_url');
                                     <td>
                                         <?php
                                         $disabled = false;
+                                        $status = "";
                                         switch ($task['status'])
                                         {
                                             case "Active":
@@ -139,6 +140,10 @@ $middle_url = session()->get('middle_url');
 
                                             case "On Hold":
                                                 $status = "badge-warning";
+                                                break;
+
+                                            case "Pending":
+                                                $status = "badge-light";
                                                 break;
 
                                         }
@@ -277,6 +282,70 @@ $middle_url = session()->get('middle_url');
 <!--    </div>-->
 <!--</div>-->
 
+<!--<div class="modal fade" id="notificationFlashModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">-->
+<!--    <div class="modal-dialog">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <h5 class="modal-title" id="notificationModalLabel">Notifications</h5>-->
+<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--            </div>-->
+<!--            <div class="modal-body">-->
+<!--                <ul>-->
+<!--                    --><?php //if (session()->getFlashdata('notifications')): ?>
+<!--                        --><?php //foreach (session()->getFlashdata('notifications') as $notification): ?>
+<!--                            <li>--><?php //= esc($notification['message']) ?><!--</li>-->
+<!--                        --><?php //endforeach; ?>
+<!--                    --><?php //else: ?>
+<!--                        <li>No new notifications</li>-->
+<!--                    --><?php //endif; ?>
+<!--                </ul>-->
+<!--            </div>-->
+<!--            <div class="modal-footer">-->
+<!--                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<div class="modal fade" id="notificationFlashModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">You have <?php (session()->getFlashdata('notifications')) ? count(session()->getFlashdata('notifications')) : 0; ?> new notifications</h5>
+            </div>
+            <div class="modal-body">
+                <div class="preview-list">
+                    <?php if (session()->getFlashdata('notifications')): ?>
+                        <?php foreach (session()->getFlashdata('notifications') as $notification): ?>
+                            <div class="preview-item px-0">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-info">
+                                        <i class="far fa-envelope mx-0"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-flex-grow">
+                                    <h6 class="preview-subject ellipsis font-weight-medium" data-id="<?= $notification['id'] ?>"><?= $notification['title'] ?>
+                                        <span class="float-right font-weight-light small-text"><?= $notification['time_difference'] ?></span>
+                                    </h6>
+                                    <p class="font-weight-light small-text">
+                                        <?= insertLineBreakAfterLength($notification['message'], 40) ?>
+                                    </p>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <?php if(session()->getFlashdata('notifications')){?>
+                    <button type="button" class="btn btn-success" id="mark_as_read">Mark All as read</button>
+                <?php }?>
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="update_task_modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -340,21 +409,48 @@ $middle_url = session()->get('middle_url');
         </div>
     </div>
 </div>
-<script>
+<script type="text/javascript">
+    // Automatically show modal if notifications exist
     $(function () {
-        // $(".updateTaskBtn").on("click", function (e) {
-        //     const task_id = $(this).attr("data-id");
-        //     $("#ModalLabel").text($("#task_title_" + task_id).val());
-        //     $("#taskStatus").val($("#task_status_" + task_id).val());
-        //     $("#task_id").val(task_id);
-        //     if ($("#task_related_files" + task_id).attr("count") > 0) {
-        //         $("#attachments").html($("#task_related_files" + task_id).html());
-        //     } else {
-        //         $("#attachments").html("<p>No Attachment found</p>");
-        //     }
-        //
-        //     $('#update_task_modal').modal('show');
-        // });
+        window.onload = function() {
+            <?php if (session()->getFlashdata('notifications')): ?>
+            $('#notificationFlashModal').modal('show');
+            <?php endif; ?>
+        }
+
+        $(document).on('click', "#mark_as_read", function () {
+            // Get the notification ID from the parent element
+            let notificationId = $(this).closest('.notification').data('id');
+
+            // AJAX request to mark the notification as read
+            $.ajax({
+                url: '/notifications/mark-as-read',
+                type: 'POST',
+                success: function(response) {
+                    $.toast({
+                        heading: 'Success',
+                        text: response.message,
+                        showHideTransition: 'slide',
+                        icon: 'success',
+                        loaderBg: '#04B76B',
+                        position: 'top-right'
+                    });
+                    setTimeout(function () {
+                        location.reload();
+                    },1500)
+                },
+                error: function(xhr, status, error) {
+                    $.toast({
+                        heading: 'Danger',
+                        text: error.message,
+                        showHideTransition: 'slide',
+                        icon: 'warning',
+                        loaderBg: '#f2a654',
+                        position: 'top-right'
+                    });
+                }
+            });
+        });
 
         $(".updateTaskBtn").on("click", function (e) {
             const task_id = $(this).attr("data-id");
