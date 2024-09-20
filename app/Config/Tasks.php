@@ -45,7 +45,7 @@ class Tasks extends BaseTasks
      */
     public function init(Scheduler $schedule)
     {
-        $schedule->command('tasks:reassign')->everyMinute();
+        $schedule->command('tasks:reassign')->everyHour(24);
 //        $schedule->command('foo:bar')->daily();
 //        $schedule->shell('cp foo bar')->daily('11:00 pm');
 
