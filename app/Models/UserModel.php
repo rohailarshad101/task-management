@@ -42,7 +42,7 @@ class UserModel extends Model
 
     public function getAllUsersWithoutAdmin()
     {
-        return $this->whereNotIn("role_id", [1])->findAll();
+        return $this->whereNotIn("role_id", [1])->where("is_active = ", 1)->findAll();
     }
 
     public function getAllUsers()

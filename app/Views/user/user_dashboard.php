@@ -60,7 +60,7 @@ $middle_url = session()->get('middle_url');
                         Tasks
                     </h4>
                     <div class="table-responsive">
-                        <table id="order-listing cursor-pointer" class="table">
+                        <table id="order-listing" class="table">
                             <thead>
                             <tr>
                                 <th>Title</th>
