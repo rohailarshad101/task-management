@@ -130,8 +130,7 @@
                 showDownload:false,
                 statusBarWidth:600,
                 dragdropWidth:600,
-                on
-                Load:function () {
+                onLoad:function () {
                     console.log("i am here");
                 },
                 onSuccess:function(files,data,xhr,pd)

@@ -188,7 +188,7 @@ if(!is_null($notifications)){
                 </div>
             </div>
             <div class="modal-footer">
-                <?php if(count($notifications) > 0){?>
+                <?php if($notification_count > 0){?>
                 <button type="button" class="btn btn-success" id="mark_as_read">Mark All as read</button>
                 <?php }?>
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>

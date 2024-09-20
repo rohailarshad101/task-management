@@ -56,9 +56,12 @@ $middle_url = session()->get('middle_url');
                                     <td class="font-weight-bold"><?= $task['category_name'] ?></td>
                                     <td>
                                     <?php foreach ($task['responsible_persons'] as $responsible_person): ?>
-                                        <span class="font-weight-bold btn btn-info">
-                                            <?= $responsible_person['name'] ?>
-                                        </span>
+                                        <a href="/admin/users/view/<?= $responsible_person['id'] ?>">
+                                            <span class="font-weight-bold btn btn-info">
+                                                <?= $responsible_person['name'] ?>
+                                            </span>
+                                        </a>
+
                                     <?php endforeach; ?>
                                     </td>
                                     <td><?= $task['start_date'] ?></td>
@@ -340,7 +343,7 @@ $middle_url = session()->get('middle_url');
                         text: "OK",
                         value: true,
                         visible: true,
-                        className: "",
+                        className: "btn-danger",
                         closeModal: true
                     }
                 }

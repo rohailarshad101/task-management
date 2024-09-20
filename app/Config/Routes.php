@@ -65,6 +65,7 @@ $routes->group('', ['filter' => ['authfilter', 'cors']], static function ($route
                 $routes->post('update/(:num)', 'UsersController::update/$1');
                 $routes->post('active-inactive', 'UsersController::activeInActive');
                 $routes->get('delete/(:num)', 'UsersController::delete/$1');
+                $routes->get('view/(:num)', 'UsersController::userView/$1');
             });
         });
     });

@@ -5,9 +5,11 @@ namespace App\Controllers\Admin;
 use App\Controllers\ApiResponse;
 use App\Models\DepartmentModel;
 use App\Models\RoleModel;
+use App\Models\TaskModel;
 use App\Models\UserModel;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\Controller;
+use PhpParser\Node\Stmt\Switch_;
 
 class UsersController extends Controller
 {
@@ -139,6 +141,59 @@ class UsersController extends Controller
         $user_model->update($this->request->getPost('user_id'), $data);
         $response = \Config\Services::response();
         return ApiResponse::success("User has been successfully $active_text", [],200, $response);
+    }
+
+    public function userView($id)
+    {
+        $user_model = new UserModel();
+        $data['user'] = $user_model->where("id =", $id)->first();
+        $data['user']['user_role'] = $user_model->role($id);
+        $data['user']['user_dept'] = $user_model->department($id);
+        $user_related_tasks = new TaskModel();
+        $tasks = $user_related_tasks->getUserRelatedTasks($id);
+        $pending_tasks = [];
+        $in_progress_tasks = [];
+        $on_hold_tasks = [];
+        $completed_tasks = [];
+        // Calculate total tasks
+        $totalTasks = count($tasks);
+        // Calculate percentage of tasks status-wise
+        $statusCounts = array();
+        foreach ($tasks as $task) {
+            $status = $task['status'];
+            if (!isset($statusCounts[$status])) {
+                $statusCounts[$status] = 0;
+            }
+            $statusCounts[$status]++;
+        }
+        foreach ($statusCounts as $status => $count) {
+            $color = "";
+            $percentage = ($count / $totalTasks) * 100;
+            switch ($status) {
+                case "Completed":
+                    $color = "#63CF72";
+                    break;
+
+                case "In Progress":
+                    $color = "#76C1FA";
+                    break;
+
+                case "Pending":
+                    $color = "#F36368";
+                    break;
+
+            }
+            $statusCounts[$status] = [
+                "count" => $count,
+                "percentage" => $percentage,
+                "color" => $color
+            ];
+        }
+
+        ksort($statusCounts);
+        $data['statusCounts'] = $statusCounts;
+        $data['task_count'] = $totalTasks;
+        return view('admin/users/user_view', $data);
     }
 
 }
