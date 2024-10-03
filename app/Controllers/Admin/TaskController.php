@@ -95,7 +95,8 @@ class TaskController extends Controller
                 'priority' => $this->request->getPost('priority'),
                 'status' => $this->request->getPost('status'),
                 'repetition_frequency' => $this->request->getPost('repetition_frequency'),
-                'description' => $this->request->getPost('description')
+                'description' => $this->request->getPost('description'),
+                'is_recurring' => $this->request->getPost('is_recurring')
             ];
 
             $task_model->insert($data);
@@ -168,7 +169,8 @@ class TaskController extends Controller
                 'priority' => $this->request->getPost('priority'),
                 'status' => $this->request->getPost('status'),
                 'repetition_frequency' => $this->request->getPost('repetition_frequency'),
-                'description' => $this->request->getPost('description')
+                'description' => $this->request->getPost('description'),
+                'is_recurring' => $this->request->getPost('is_recurring'),
             ];
 
             $task_model->update($id, $data);

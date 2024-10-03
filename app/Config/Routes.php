@@ -10,6 +10,7 @@ $routes->get('/', 'LoginController::index');
 $routes->get('/login', 'LoginController::index', ['as' => 'login']);
 $routes->post('/login', 'AuthController::login');
 $routes->get('/logout', 'AuthController::logout');
+//$routes->get('/test', 'TestController::test');
 
 $routes->group('', ['filter' => ['authfilter', 'cors']], static function ($routes) {
     $routes->group('', ['namespace' => "App\Controllers\Admin"], static function ($routes) {

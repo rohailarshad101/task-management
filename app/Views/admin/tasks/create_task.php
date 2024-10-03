@@ -102,6 +102,14 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <div class="form-check form-check-flat form-check-primary">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" id="is_recurring" name="is_recurring" value="false">
+                                    Is Recurring
+                                    <i class="input-helper"></i></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="description">Description</label>
                             <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
                         </div>
@@ -120,6 +128,15 @@
         // $('.file-upload-default').on('change', function() {
         //     $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
         // });
+
+        $('#is_recurring').on('click', function() {
+            if($(this).is(':checked')){
+                $('#is_recurring').val(1);
+            }else{
+                $('#is_recurring').val(0);
+            }
+        });
+
         let task_files = [];
         if ($("#fileuploader").length) {
             $("#fileuploader").uploadFile({url: "/admin/tasks/upload-file",
@@ -131,7 +148,7 @@
                 statusBarWidth:600,
                 dragdropWidth:600,
                 onLoad:function () {
-                    console.log("i am here");
+
                 },
                 onSuccess:function(files,data,xhr,pd)
                 {

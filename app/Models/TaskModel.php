@@ -9,7 +9,7 @@ class TaskModel extends Model
     protected $table = 'tasks';
     protected $primaryKey = 'id';
     protected $allowedFields = [
-        'created_by', 'title', 'category_id', 'start_date', 'repetition_frequency', 'due_date', 'tags', 'priority', 'status', 'description', 'completed_at'
+        'created_by', 'title', 'category_id', 'start_date', 'repetition_frequency', 'due_date', 'tags', 'priority', 'status', 'is_recurring', 'description', 'completed_at'
     ];
 
     protected $useSoftDeletes = true; // Enable soft deletes
