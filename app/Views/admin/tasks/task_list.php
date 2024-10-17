@@ -87,6 +87,7 @@ $middle_url = session()->get('middle_url');
                                     </td>
                                     <td><?php
                                         $hide_edit_btn = false;
+                                        $status = "";
                                         switch ($task['status'])
                                         {
                                             case "Active":

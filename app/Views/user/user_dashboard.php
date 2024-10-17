@@ -323,7 +323,7 @@ $middle_url = session()->get('middle_url');
                                         <i class="far fa-envelope mx-0"></i>
                                     </div>
                                 </div>
-                                <div class="preview-item-flex-grow">
+                                <div class="preview-item-content flex-grow">
                                     <h6 class="preview-subject ellipsis font-weight-medium" data-id="<?= $notification['id'] ?>"><?= $notification['title'] ?>
                                         <span class="float-right font-weight-light small-text"><?= $notification['time_difference'] ?></span>
                                     </h6>
