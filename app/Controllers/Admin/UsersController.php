@@ -98,7 +98,6 @@ class UsersController extends Controller
         // Load the user model to get the email address
         $userModel = new UserModel();
         if ($user) {
-            log_message("info", "inside if");
             $email = \Config\Services::email();
 
             $email->setTo($user['email']);
@@ -119,13 +118,10 @@ class UsersController extends Controller
             Best regards,
             <br><br>
             The Task Management Team");
-            log_message('info', 'before');
             $session = session();
             if ($email->send()) {
-                log_message('info', 'Email sent successfully to recipient@example.com');
                 $session->setFlashdata('success', "An Email with email and password sent to {$user['email']}.");
             } else {
-                log_message('error', 'Failed to send email. Debug info: ' . $user);
                 $session->setFlashdata('error', "Failed to send email to {$user['email']}.");
             }
         }
