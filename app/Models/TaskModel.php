@@ -30,7 +30,7 @@ class TaskModel extends Model
             ->join('categories', 'categories.id = tasks.category_id', 'inner')
             ->where("tasks.id", $task_id)
             ->first();
-        return $category['category_name'];
+        return $category['category_name'] ?? NULL;
     }
 
     public function getTasksRelatedUsers($task_id)

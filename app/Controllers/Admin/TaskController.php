@@ -16,6 +16,7 @@ use CodeIgniter\Controller;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\CustomConfig;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class TaskController extends Controller
 {
@@ -430,5 +431,78 @@ class TaskController extends Controller
         }else{
             return ApiResponse::error('Task files not found', 400, $response);
         }
+    }
+
+    public function importTasksByFile()
+    {
+        try {
+            $validationRules = [
+                'file' => [
+                    'label' => 'File',
+                    'rules' => 'uploaded[file]|max_size[file,2048]|ext_in[file,xls,xlsx]',
+                ],
+            ];
+            if (!$this->validate($validationRules)) {
+                return json_encode(['error' => [
+                    $this->validator->getErrors()
+                ]]);
+            }
+            $task_file = $this->request->getFile('xlsx_file');
+            if ($task_file->isValid() && !$task_file->hasMoved()&& !$task_file->getSize() !== 0) {
+                $spreadsheet = IOFactory::load($task_file->getTempName());
+                $data = $spreadsheet->getActiveSheet()->toArray();
+                $header = array_shift($data); // Remove the first element, which is the header
+                $result = [];
+                foreach ($data as $idx => $row) {
+                    $row = array_combine($header, $row); // Combine header with row values
+//                }
+//                foreach ($result as $row)
+//                {
+                    $row['start_date'] = date('Y-m-d', strtotime($row['start_date']));
+                    $row['due_date'] = date('Y-m-d', strtotime($row['due_date']));
+                    $row['created_at'] = date('Y-m-d H:i:s');
+                    $row['updated_at'] = date('Y-m-d H:i:s');
+                    $taskModel = new TaskModel();
+                    $taskModel->insert($row);
+                }
+            }
+            $response = \Config\Services::response();
+            return ApiResponse::success('Tasks imported successfully!', [],200, $response);
+        } catch (\Exception $ex) {
+            $error = $ex->getMessage().' '.$ex->getLine().' '.$ex->getFile();
+            return $this->response->setStatusCode(500)->setJSON(['error' => $error]);
+        }
+    }
+
+    public function movetheimportedfile()
+    {
+        // Move the file to the desired directory
+//                $filePath = $this->customConfig->file_upload_path['tasks_file_path'];
+//                $task_file->move($filePath, $new_file_name);
+//                $imported_task_file = $filePath.'/'.$new_file_name;
+//        $new_file_name = $original_file_name.'-'.substr($task_file->getRandomName(),11);
+
+//        $spreadsheet = IOFactory::load($task_file->getTempName());
+////                $sheet = $spreadsheet->getActiveSheet();
+//        // Do something with the spreadsheet, e.g., read data
+//        $data = $spreadsheet->getActiveSheet()->toArray();
+//        echo "<pre>";
+//        print_r($data);
+//        die();
+////                echo "<pre>";
+////                print_r($data);
+////                die();
+//        // Get data from the sheet
+//        $data = [];
+//        foreach ($sheet->getRowIterator() as $row) {
+//            $rowData = [];
+//            foreach ($row->getCellIterator() as $cell) {
+//                $rowData[] = $cell->getValue();
+//            }
+//            $data[] = $rowData;
+//        }
+//        echo "<pre>";
+//        print_r($data);
+//        die();
     }
 }

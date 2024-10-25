@@ -32,6 +32,7 @@ $routes->group('', ['filter' => ['authfilter', 'cors']], static function ($route
                 $routes->delete('(:num)', 'TaskController::delete/$1');
                 $routes->post('upload-file', 'TaskController::uploadTaskFile');
                 $routes->post('delete-file', 'TaskController::deleteTaskFile');
+                $routes->post('import', 'TaskController::importTasksByFile');
             });
             $routes->group('categories', static function ($routes) {
                 $routes->get('', 'CategoryController::index');

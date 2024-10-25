@@ -25,6 +25,7 @@ $middle_url = session()->get('middle_url');
                             <h3></h3>
                         </div>
                         <div>
+                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#importTaskModal" data-whatever="@mdo">Import Tasks</button>
                             <a href="tasks/create" class="btn btn-primary">New Task</a>
                         </div>
                     </div>
@@ -190,6 +191,36 @@ $middle_url = session()->get('middle_url');
                 </form>
                 <div class="profile-feed" id="comments">
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="importTaskModal" tabindex="-1" role="document" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Import Tasks</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="import_task_file_form" action="<?= site_url('/admin/tasks/import') ?>" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label>File upload</label>
+                        <input type="file" name="xlsx_file" id="xlsx_file" accept=".xlsx" class="file-upload-default" required>
+                        <div class="input-group col-xs-12">
+                            <input type="text" class="form-control file-upload-info" disabled placeholder="Upload xlsx">
+                            <span class="input-group-append">
+                              <button class="upload-task-file btn btn-primary" type="button">Upload</button>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="upload_task_file">Import</button>
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -385,6 +416,59 @@ $middle_url = session()->get('middle_url');
                 }
             });
             // deleteTask($(this).attr("data-id"));
+        });
+
+        $('.upload-task-file').on('click', function() {
+            var file = $(this).parent().parent().parent().find('.file-upload-default');
+            file.trigger('click');
+        });
+        $('.file-upload-default').on('change', function() {
+            $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
+        });
+
+        $("#upload_task_file").on('click', function ()
+        {
+            var form = $("#import_task_file_form")[0]; // Get the DOM element from jQuery
+            var formData = new FormData(form); // Create a FormData object from the form
+            var fileInput = form.querySelector('input[type="file"]'); // Select the file input
+            if (fileInput.files.length > 0) {
+                formData.append('file', fileInput.files[0]); // Append the file
+            }
+            console.log(formData);
+            console.log(fileInput.files[0].name);
+            $.ajax({
+                url: '/admin/tasks/import',  // The server-side script to handle the upload
+                type: 'POST',
+                data: formData,
+                processData: false,  // Prevent jQuery from automatically transforming the data
+                contentType: false,  // Do not set content-type header
+                success: function (response) {
+                    if(response.status == "success") {
+                        $.toast({
+                            heading: 'Success',
+                            text: response.message,
+                            showHideTransition: 'slide',
+                            icon: 'success',
+                            loaderBg: '#04B76B',
+                            position: 'top-right'
+                        });
+                        form.reset();
+                        window.location.reload();
+                    } else if(response.status == "error") {
+                        $.toast({
+                            heading: 'Danger',
+                            text: response.message,
+                            showHideTransition: 'slide',
+                            // icon: 'error,
+                            loaderBg: '#f2a654',
+                            position: 'top-right'
+                        })
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error(textStatus, errorThrown);
+                }
+            });
         });
     });
 
