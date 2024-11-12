@@ -25,15 +25,17 @@ $middle_url = session()->get('middle_url');
                             <h3></h3>
                         </div>
                         <div>
+                            <a href="javascript:void(0)" class="btn btn-danger deleteTaskBtn">Delete</a>
                             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#importTaskModal" data-whatever="@mdo">Import Tasks</button>
                             <a href="tasks/create" class="btn btn-primary">New Task</a>
                         </div>
                     </div>
                     <br>
                     <div class="table-responsive">
-                        <table id="order-listing"  class="table">
+                        <table id="task-management-table"  class="table">
                             <thead>
                                 <tr>
+                                    <th><input name="select_all" value="1" id="example-select-all" type="checkbox" /></th>
                                     <th>Title</th>
                                     <th>Category</th>
                                     <th>Responsible Persons</th>
@@ -50,6 +52,7 @@ $middle_url = session()->get('middle_url');
                             <?php if(count($tasks) > 0){ ?>
                                 <?php foreach ($tasks as $task): ?>
                                 <tr>
+                                    <td><input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '"></td>
                                     <td class="font-weight-bold">
                                         <?= $task['task_name'] ?>
                                         <input type="hidden" id="task_title_<?= $task['task_id'] ?>" value="<?= $task['task_name'] ?>">
@@ -135,7 +138,6 @@ $middle_url = session()->get('middle_url');
                                             <i class="fa fa-eye text-light-primary"></i>
                                             &nbsp;View
                                         </a>
-                                        <a href="javascript:void(0)" class="btn btn-danger deleteTaskBtn" data-id="<?= $task['task_id']; ?>">Delete</a>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -403,6 +405,8 @@ $middle_url = session()->get('middle_url');
                             }, 2000); // Adjust the delay as needed
                         },
                         error: function(xhr, status, error) {
+                            $('#loader_div').hide();
+                            $('#loader').hide();
                             $.toast({
                                 heading: 'Danger',
                                 text: message,

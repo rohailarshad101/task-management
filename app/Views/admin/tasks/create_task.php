@@ -93,7 +93,7 @@
                             <div class="col-xs-12 grid-margin stretch-card">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h4 class="card-title">Jquery file upload</h4>
+                                        <h4 class="card-title">File upload</h4>
                                         <div class="file-upload-wrapper">
                                             <div id="fileuploader">Upload</div>
                                         </div>

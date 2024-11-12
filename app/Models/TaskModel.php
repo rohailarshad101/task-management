@@ -97,4 +97,11 @@ class TaskModel extends Model
         }
         return $data;
     }
+
+    public function getTaskCountByStatus()
+    {
+        return $this->select('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->findAll();
+    }
 }

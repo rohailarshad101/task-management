@@ -3,7 +3,11 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Models\Company;
+use App\Models\TaskModel;
 use App\Models\UserModel;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends BaseController
 {
@@ -19,7 +23,26 @@ class AdminController extends BaseController
 
     public function dashboard()
     {
-        return view('admin/admin_dashboard');
+        $statuses = ['Pending', 'In Progress', 'Completed', 'Closed'];
+        $taskModel = new TaskModel();
+        $taskCount = $taskModel->getTaskCountByStatus();
+        $results = [];
+        foreach ($statuses as $status) {
+            $count = 0;
+            foreach ($taskCount as $row) {
+                if ($row['status'] === $status) {
+                    $count = $row['count'];
+                    break;
+                }
+            }
+
+            // Add the status and count to the results array
+            $results[] = [
+                'status' => $status,
+                'count' => $count,
+            ];
+        }
+        return view('admin/admin_dashboard', ['taskCount' => $results]);
     }
 
     public function profile()

@@ -43,7 +43,14 @@
                             <tbody>
                             <?php foreach ($users as $user): ?>
                                 <tr>
-                                    <td><?= $user['first_name'].' '.$user['last_name'] ?></td>
+<!--                                    <td>--><?php //= $user['first_name'].' '.$user['last_name'] ?><!--</td>-->
+                                    <td>
+                                        <a href="/admin/users/view/<?= $user['id'] ?>">
+                                            <span class="font-weight-bold btn btn-info">
+                                                <?= $user['first_name'].' '.$user['last_name'] ?>
+                                            </span>
+                                        </a>
+                                    </td>
                                     <td><?= $user['email'] ?></td>
                                     <td><?= $user['mobile'] ?></td>
                                     <td><?= $user['user_role']['name'] ?></td>

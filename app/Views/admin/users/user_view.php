@@ -20,12 +20,11 @@ if(empty($profile_picture)){
                     <img src="<?= base_url().$profile_picture ?>" class="img-lg rounded-circle mb-2" alt="profile image"/>
                     <h4><?= $user['first_name'].' '.$user['last_name']; ?></h4>
                     <p class="text-muted">Developer</p>
-                    <p class="mt-4 card-text">
-                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                        Aenean commodo ligula eget dolor. Lorem
-                    </p>
-                    <!--                    <button class="btn btn-info btn-sm mt-3 mb-4">Follow</button>-->
-                    <div class="border-top pt-4">
+<!--                    <p class="mt-4 card-text">-->
+<!--                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit.-->
+<!--                        Aenean commodo ligula eget dolor. Lorem-->
+<!--                    </p>-->
+                    <div class="pt-4">
                         <ol  class="custom-list list-group">
                             <li  class="list-group-item d-flex justify-content-between align-items-start flex-wrap">
                                 <div class="ms-2 me-auto">Email</div><span ><?= $user['email']; ?></span></li>
