@@ -185,11 +185,35 @@ class UsersController extends Controller
                 "color" => $color
             ];
         }
-
+        $all_tasks = $user_related_tasks->findAll();
         ksort($statusCounts);
         $data['statusCounts'] = $statusCounts;
         $data['task_count'] = $totalTasks;
+        $data['grouped_tasks_by_statuses'] = $this->groupTasksByStatus($tasks);
+
         return view('admin/users/user_view', $data);
     }
 
+    private function groupTasksByStatus($tasks)
+    {
+        // Initialize an array to store tasks grouped by status
+        $groupedTasks = [];
+
+        // Loop through the tasks and group them by status
+        foreach ($tasks as $task) {
+            $status = $task['status'];
+            if (!isset($groupedTasks[$status])) {
+                $groupedTasks[$status] = [];
+            }
+            // Add the task title to the respective status group
+            $groupedTasks[$status][] = $task['title'];
+        }
+
+        // Optional: Sort task titles in each group
+        foreach ($groupedTasks as $status => $titles) {
+            sort($groupedTasks[$status]);  // Sort titles alphabetically
+        }
+
+        return $groupedTasks;
+    }
 }

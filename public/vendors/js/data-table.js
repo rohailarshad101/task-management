@@ -48,8 +48,7 @@
                 'orderable': false,
                 'className': 'dt-body-center',
                 'render': function (data, type, full, meta) {
-                    console.log(data)
-                    return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
+                    return '<input type="checkbox" id="task_id_'+data+'" name="task_id_'+data+'" value="' + $('<div/>').text(data).html() + '" class="cursor-pointer">';
                 }
             }],
         });

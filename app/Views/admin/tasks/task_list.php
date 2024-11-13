@@ -35,7 +35,7 @@ $middle_url = session()->get('middle_url');
                         <table id="task-management-table"  class="table">
                             <thead>
                                 <tr>
-                                    <th><input name="select_all" value="1" id="example-select-all" type="checkbox" /></th>
+                                    <th><input type="checkbox" name="select_all" id="example-select-all" class="cursor-pointer" /></th>
                                     <th>Title</th>
                                     <th>Category</th>
                                     <th>Responsible Persons</th>
@@ -52,7 +52,7 @@ $middle_url = session()->get('middle_url');
                             <?php if(count($tasks) > 0){ ?>
                                 <?php foreach ($tasks as $task): ?>
                                 <tr>
-                                    <td><input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '"></td>
+                                    <td><?= $task['task_id'] ?></td>
                                     <td class="font-weight-bold">
                                         <?= $task['task_name'] ?>
                                         <input type="hidden" id="task_title_<?= $task['task_id'] ?>" value="<?= $task['task_name'] ?>">
@@ -65,7 +65,6 @@ $middle_url = session()->get('middle_url');
                                                 <?= $responsible_person['name'] ?>
                                             </span>
                                         </a>
-
                                     <?php endforeach; ?>
                                     </td>
                                     <td><?= $task['start_date'] ?></td>
@@ -134,7 +133,7 @@ $middle_url = session()->get('middle_url');
                                         <?php }else{ ?>
                                             <a href="javascript:void(0)" class="btn btn-secondary btn-sm" disabled="">Edit</a>
                                         <?php } ?>
-                                        <a href="javascript:void(0)" class="btn btn-info updateTaskBtn" data-id="<?= $task['task_id']; ?>">
+                                        <a href="javascript:void(0)" class="mt-1 btn btn-info updateTaskBtn" data-id="<?= $task['task_id']; ?>">
                                             <i class="fa fa-eye text-light-primary"></i>
                                             &nbsp;View
                                         </a>
@@ -359,7 +358,21 @@ $middle_url = session()->get('middle_url');
 
         $(".deleteTaskBtn").on("click", function (e)
         {
-            const task_id = $(this).attr("data-id");
+            let task_ids = [];
+            $('input[type="checkbox"]:checked').map(function() {
+                if( !isNaN(parseInt(this.value)) ) {
+                    task_ids.push(parseInt(this.value))
+                }
+            }).get();
+            if(task_ids.length == 0) {
+                swal({
+                    title: 'Delete Task!',
+                    text: 'Please select at least one task to delete.',
+                    timer: 2000,
+                    button: false
+                })
+                return false;
+            }
             swal({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -382,10 +395,11 @@ $middle_url = session()->get('middle_url');
                     }
                 }
             }).then(function(isConfirm) {
-                if (isConfirm) {
+                if (isConfirm && task_ids.length > 0) {
                     $.ajax({
-                        url: '/<?= $middle_url; ?>/tasks/' + task_id,
-                        type: 'DELETE',
+                        url: '/<?= $middle_url; ?>/tasks',
+                        type: 'post',
+                        data: {task_ids: task_ids},
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'), // Include CSRF token if necessary
                             'Authorization': 'Bearer <your_token>' // Include authorization token if necessary
@@ -402,7 +416,7 @@ $middle_url = session()->get('middle_url');
                             })
                             setTimeout(function() {
                                 location.reload();
-                            }, 2000); // Adjust the delay as needed
+                            }, 2000);
                         },
                         error: function(xhr, status, error) {
                             $('#loader_div').hide();

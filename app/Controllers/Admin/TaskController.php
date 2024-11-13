@@ -97,7 +97,7 @@ class TaskController extends Controller
                 'status' => $this->request->getPost('status'),
                 'repetition_frequency' => $this->request->getPost('repetition_frequency'),
                 'description' => $this->request->getPost('description'),
-                'is_recurring' => $this->request->getPost('is_recurring')
+                'is_recurring' => $this->request->getPost('is_recurring') ?? 0
             ];
 
             $task_model->insert($data);
@@ -171,7 +171,7 @@ class TaskController extends Controller
                 'status' => $this->request->getPost('status'),
                 'repetition_frequency' => $this->request->getPost('repetition_frequency'),
                 'description' => $this->request->getPost('description'),
-                'is_recurring' => $this->request->getPost('is_recurring'),
+                'is_recurring' => $this->request->getPost('is_recurring') ?? 0,
             ];
 
             $task_model->update($id, $data);
@@ -268,17 +268,13 @@ class TaskController extends Controller
         }
     }
 
-    public function delete($id = null)
+    public function deleteMultipleTasks()
     {
+        $task_ids = $this->request->getPost('task_ids');
         $task = new TaskModel();
-        // Check if ID is provided
-        if ($id === null) {
-            return $this->response->setStatusCode(400)->setJSON(['error' => 'Task ID is required.']);
-        }
-
         // Attempt to delete the task
         try {
-            $task->delete($id);
+            $task->delete($task_ids);
             // Redirect to tasks list after successful deletion
             return $this->response->setJSON(['success' => 'Task deleted successfully.']);
         } catch (\Exception $e) {

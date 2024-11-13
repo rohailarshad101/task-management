@@ -29,7 +29,7 @@ $routes->group('', ['filter' => ['authfilter', 'cors']], static function ($route
                 $routes->get('task-related-files/(:num)', 'TaskController::getTaskRelatedFiles/$1');
                 $routes->post('update/(:num)', 'TaskController::updateTask/$1');
                 $routes->post('update/comment/(:num)', 'TaskController::updateTaskComment/$1');
-                $routes->delete('(:num)', 'TaskController::delete/$1');
+                $routes->post('', 'TaskController::deleteMultipleTasks');
                 $routes->post('upload-file', 'TaskController::uploadTaskFile');
                 $routes->post('delete-file', 'TaskController::deleteTaskFile');
                 $routes->post('import', 'TaskController::importTasksByFile');
