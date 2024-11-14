@@ -458,16 +458,22 @@ class TaskController extends Controller
                     $taskModel = new TaskModel();
                     $taskModel->insert($row);
                     $lastInsertedId = $taskModel->getInsertID();
-                    $userModel = New UserModel();
-                    $user = $userModel->where('email', $row['user_email'])->first();
-                    if(!empty($user)){
-                        $task_user = new TaskUserModel;
-                        $task_user->insert([
-                            "user_id" => $user['id'],
-                            "task_id" => $lastInsertedId
-                        ]);
-                        $message = "Task '{$row['title']}' has been reassigned to you and is due on {$row['due_date']}.";
-                        $this->insertNotitifcation($user['id'], $message);
+                    $emails = explode(',', $row['user_email']);
+                    foreach ($emails as $email) {
+                        $email = trim($email);
+                        $userModel = new UserModel();
+                        $user = $userModel->where('email', $email)->first();
+                        if (!empty($user)) {
+                            $task_user = new TaskUserModel();
+                            $task_user->insert([
+                                "user_id" => $user['id'],
+                                "task_id" => $lastInsertedId
+                            ]);
+                            $message = "Task '{$row['title']}' has been reassigned to you and is due on {$row['due_date']}.";
+                            $this->insertNotitifcation($user['id'], $message);
+                        } else {
+                            error_log("User with email {$email} not found.");
+                        }
                     }
                 }
             }
