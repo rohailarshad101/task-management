@@ -451,15 +451,24 @@ class TaskController extends Controller
                 $result = [];
                 foreach ($data as $idx => $row) {
                     $row = array_combine($header, $row); // Combine header with row values
-//                }
-//                foreach ($result as $row)
-//                {
                     $row['start_date'] = date('Y-m-d', strtotime($row['start_date']));
                     $row['due_date'] = date('Y-m-d', strtotime($row['due_date']));
                     $row['created_at'] = date('Y-m-d H:i:s');
                     $row['updated_at'] = date('Y-m-d H:i:s');
                     $taskModel = new TaskModel();
                     $taskModel->insert($row);
+                    $lastInsertedId = $taskModel->getInsertID();
+                    $userModel = New UserModel();
+                    $user = $userModel->where('email', $row['user_email'])->first();
+                    if(!empty($user)){
+                        $task_user = new TaskUserModel;
+                        $task_user->insert([
+                            "user_id" => $user['id'],
+                            "task_id" => $lastInsertedId
+                        ]);
+                        $message = "Task '{$row['title']}' has been reassigned to you and is due on {$row['due_date']}.";
+                        $this->insertNotitifcation($user['id'], $message);
+                    }
                 }
             }
             $response = \Config\Services::response();

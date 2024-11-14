@@ -655,15 +655,18 @@ $middle_url = session()->get('middle_url');
                     // Handle comments
                     let commentsHtml = '';
                     response.data.comments.forEach(commentRow => {
+                        let task_comment = commentRow.comment;
+                        if(commentRow.comment === ''){
+                            task_comment = commentRow.comment_related_logs.comment;
+                        }
                         let task_comment_attachments = commentRow.task_comment_attachments;
                         let comment_user = commentRow.comment_user;
                         let user_full_name = comment_user.first_name+' ' +comment_user.last_name;
-                        let time_diff = calculateTimeDiff(commentRow.created_at);
                         commentsHtml += '<div class="d-flex align-items-start profile-feed-item">';
-                        commentsHtml += '<img src="<?= base_url() ?>vendors/images/faces/face19.html" alt="profile" class="img-sm rounded-circle"/>';
+                        commentsHtml += '<img src="<?= base_url() ?>'+comment_user.profile_picture+'" alt="profile" class="img-sm rounded-circle"/>';
                         commentsHtml += '<div class="ml-4">';
                         commentsHtml += '<h6>'+user_full_name+'<small class="ml-4 text-muted"><i class="far fa-clock mr-1"></i>'+commentRow.comment_time_diff+'</small></h6>';
-                        commentsHtml += '<p>'+commentRow.comment+'</p>';
+                        commentsHtml += '<p>'+task_comment+'</p>';
                         $.each(task_comment_attachments, function(index, attachment) {
                             // Simplify the file path
                             attachment.file_path = attachment.file_path.replace(/\\\\/g, '\\');

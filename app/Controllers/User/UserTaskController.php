@@ -133,6 +133,7 @@ class UserTaskController extends Controller
             $task_model = new TaskModel();
             $task_arr = $task_model->find($id);
 
+
             $task_comment = new TaskCommentModel();
             $data = [
                 'task_id' => $post['task_id'],
@@ -162,6 +163,8 @@ class UserTaskController extends Controller
                     'file_size' => formatBytes($task_update_files->getSize())
                 ]);
             }
+
+            $task_status_log = "";
             if($task_arr['status'] !== $post['task_status']){
                 $task_status_log = "Task Status Changed From ".$task_arr['status']." to ".$post['task_status'];
             }else if($task_arr['status'] == $post['task_status'] && !empty($post['task_comment'])){
