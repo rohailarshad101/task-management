@@ -42,6 +42,7 @@ $routes->group('', ['filter' => ['authfilter', 'cors']], static function ($route
                 $routes->post('update/(:num)', 'CategoryController::update/$1');
                 $routes->get('delete/(:num)', 'CategoryController::delete/$1');
             });
+
             $routes->group('departments', function ($routes) {
                 $routes->get('/', 'DepartmentController::index');
                 $routes->get('create', 'DepartmentController::create');
@@ -49,6 +50,15 @@ $routes->group('', ['filter' => ['authfilter', 'cors']], static function ($route
                 $routes->get('edit/(:num)', 'DepartmentController::edit/$1');
                 $routes->post('update/(:num)', 'DepartmentController::update/$1');
                 $routes->get('delete/(:num)', 'DepartmentController::delete/$1');
+            });
+
+            $routes->group('roles', function ($routes) {
+                $routes->get('/', 'RoleController::index');
+                $routes->get('create', 'RoleController::create');
+                $routes->post('store', 'RoleController::store');
+                $routes->get('edit/(:num)', 'RoleController::edit/$1');
+                $routes->post('update/(:num)', 'RoleController::update/$1');
+                $routes->get('delete/(:num)', 'RoleController::delete/$1');
             });
 
 //            $routes->group('roles', static function ($routes) {

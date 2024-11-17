@@ -50,13 +50,13 @@ class RoleController extends BaseController
         ];
 
         $model->save($data);
-        return redirect()->to('admin/roles/roles_list');
+        return redirect()->to('admin/roles');
     }
 
     public function delete($id)
     {
         $model = new RoleModel();
         $model->delete($id);
-        return redirect()->to('admin/roles/roles_list');
+        return redirect()->to('admin/roles');
     }
 }

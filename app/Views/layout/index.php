@@ -138,12 +138,12 @@ if(!is_null($notifications)){
                         <span class="menu-title">Users</span>
                     </a>
                 </li>
-<!--                <li class="nav-item">-->
-<!--                    <a class="nav-link" href="/admin/roles">-->
-<!--                        <i class="fa fa-users menu-icon"></i>-->
-<!--                        <span class="menu-title">Roles</span>-->
-<!--                    </a>-->
-<!--                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/roles">
+                        <i class="fa fa-users menu-icon"></i>
+                        <span class="menu-title">Roles</span>
+                    </a>
+                </li>
                 <?php } ?>
             </ul>
         </nav>
