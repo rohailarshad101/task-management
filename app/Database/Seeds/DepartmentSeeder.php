@@ -18,3 +18,7 @@ class DepartmentSeeder extends Seeder
         $this->db->table('departments')->insertBatch($data);
     }
 }
+
+
+// command to run seeder
+// php spark db:seed DepartmentSeeder

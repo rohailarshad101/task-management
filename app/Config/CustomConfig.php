@@ -8,7 +8,7 @@ class CustomConfig extends BaseConfig
 {
 
     public array $file_upload_path = [
-        'tasks_file_path' => 'uploads'.DIRECTORY_SEPARATOR.'task_related_documents'.DIRECTORY_SEPARATOR,
+        'tasks_file_path' => 'uploads' . DIRECTORY_SEPARATOR . 'task_related_documents' . DIRECTORY_SEPARATOR,
     ];
 
     public array $task_statuses_array = [
@@ -33,4 +33,33 @@ class CustomConfig extends BaseConfig
         "Bi-Weekly" => "Bi-Weekly",
         "Monthly" => "Monthly",
     ];
+
+    public array $module_list_array = [
+        [
+            'module' => 'Roles',
+            'all_access' => 0,
+            'list' => 0,
+            'create_records' => 0,
+            'edit_records' => 0,
+            'delete_records' => 0
+        ],
+        [
+            'module' => 'Category',
+            'all_access' => 0,
+            'list' => 0,
+            'create_records' => 0,
+            'edit_records' => 0,
+            'delete_records' => 0
+        ],
+        [
+            'module' => 'Tasks',
+            'all_access' => 0,
+            'list' => 0,
+            'create_records' => 0,
+            'edit_records' => 0,
+            'delete_records' => 0
+        ],
+    ];
+
+
 }

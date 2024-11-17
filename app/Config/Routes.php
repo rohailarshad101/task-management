@@ -56,6 +56,7 @@ $routes->group('', ['filter' => ['authfilter', 'cors']], static function ($route
                 $routes->get('/', 'RoleController::index');
                 $routes->get('create', 'RoleController::create');
                 $routes->post('store', 'RoleController::store');
+                $routes->post('storeAccessMatrix', 'RoleController::storeAccessMatrix');
                 $routes->get('edit/(:num)', 'RoleController::edit/$1');
                 $routes->post('update/(:num)', 'RoleController::update/$1');
                 $routes->get('delete/(:num)', 'RoleController::delete/$1');
